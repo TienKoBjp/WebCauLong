@@ -1,0 +1,186 @@
+@model List<AspNetMvcApp.Models.CartItem>
+@{
+    ViewData["Title"] = "Giỏ Hàng - KHA Sport";
+}
+
+<!-- Breadcrumb Header -->
+<div class="dashboard-heading-sec">
+    <div class="welcome-msg">
+        <a href="@Url.Action("Index", "Products")" class="btn-secondary-custom d-inline-flex align-items-center" style="gap: 0.5rem; text-decoration: none; padding: 0.5rem 1.1rem; border-radius: 10px;">
+            <i class="fa-solid fa-arrow-left"></i> Trở về Cửa Hàng
+        </a>
+        <h1 style="margin-top: 1rem; font-size: 2.2rem;">Giỏ Hàng Của Bạn</h1>
+    </div>
+</div>
+
+<div class="cart-container">
+    <div class="details-glow" style="top: -100px; right: -100px; width: 300px; height: 300px; background: var(--grad-primary); filter: blur(100px); opacity: 0.1; position: absolute; pointer-events: none;"></div>
+    
+    @if (Model == null || Model.Count == 0)
+    {
+        <div class="empty-showroom" id="emptyCartState">
+            <i class="fa-solid fa-cart-shopping empty-icon" style="font-size: 4rem; background: var(--grad-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1.5rem; display: inline-block;"></i>
+            <h3 style="font-size: 1.4rem; color: var(--text-primary); margin-bottom: 0.5rem;">Giỏ hàng của bạn đang trống</h3>
+            <p style="color: var(--text-secondary); max-width: 450px; margin: 0 auto 1.5rem auto; font-size: 0.9rem;">
+                Có vẻ như bạn chưa chọn được sản phẩm ưng ý. Hãy quay lại cửa hàng để tiếp tục khám phá các sản phẩm chất lượng khác.
+            </p>
+            <a href="@Url.Action("Index", "Products")" class="btn-primary-custom d-inline-flex" style="margin: 0 auto; text-decoration: none;">
+                <i class="fa-solid fa-basket-shopping"></i> Quay lại mua sắm
+            </a>
+        </div>
+        
+        <div class="cart-grid" id="cartContentState" style="display: none;">
+            <!-- Column 1: Items List -->
+            <div class="cart-table-card">
+                <div class="table-responsive">
+                    <table class="cart-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 80px;">Ảnh</th>
+                                <th>Sản phẩm</th>
+                                <th style="width: 120px;">Đơn giá</th>
+                                <th style="width: 130px;">Số lượng</th>
+                                <th style="width: 130px;">Thành tiền</th>
+                                <th style="width: 60px; text-align: center;">Xóa</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cartItemsList">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Column 2: Order Summary Card -->
+            <div class="cart-summary-card">
+                <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--text-primary); font-family: 'Plus Jakarta Sans', sans-serif;">
+                    ⚡ Tóm tắt đơn hàng
+                </h3>
+                <div class="summary-row">
+                    <span>Tạm tính</span>
+                    <span id="cartSubtotal">0 đ</span>
+                </div>
+                <div class="summary-row">
+                    <span>Phí vận chuyển</span>
+                    <span style="color: var(--accent-emerald); font-weight: 600;">Miễn phí</span>
+                </div>
+                <div class="summary-total-row">
+                    <span>Tổng thanh toán</span>
+                    <span class="summary-total-price" id="cartTotal">0 đ</span>
+                </div>
+
+                <div style="margin-top: 1.75rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                    <button type="button" class="btn-primary-custom justify-content-center w-100 py-3" style="border-radius: 12px; font-weight: 600; font-size: 1rem;">
+                        <i class="fa-solid fa-credit-card"></i> Tiến hành thanh toán
+                    </button>
+                    <button type="button" class="btn-secondary-custom justify-content-center w-100 btn-clear-cart" style="border-radius: 12px; font-size: 0.9rem;">
+                        <i class="fa-solid fa-trash-arrow-up"></i> Xóa toàn bộ giỏ hàng
+                    </button>
+                    <a href="@Url.Action("Index", "Products")" class="btn-secondary-custom justify-content-center w-100" style="border-radius: 12px; text-decoration: none; font-size: 0.9rem;">
+                        <i class="fa-solid fa-basket-shopping"></i> Tiếp tục mua sắm
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="empty-showroom" id="emptyCartState" style="display: none;">
+            <i class="fa-solid fa-cart-shopping empty-icon" style="font-size: 4rem; background: var(--grad-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1.5rem; display: inline-block;"></i>
+            <h3 style="font-size: 1.4rem; color: var(--text-primary); margin-bottom: 0.5rem;">Giỏ hàng của bạn đang trống</h3>
+            <p style="color: var(--text-secondary); max-width: 450px; margin: 0 auto 1.5rem auto; font-size: 0.9rem;">
+                Có vẻ như bạn chưa chọn được sản phẩm ưng ý. Hãy quay lại cửa hàng để tiếp tục khám phá các sản phẩm chất lượng khác.
+            </p>
+            <a href="@Url.Action("Index", "Products")" class="btn-primary-custom d-inline-flex" style="margin: 0 auto; text-decoration: none;">
+                <i class="fa-solid fa-basket-shopping"></i> Quay lại mua sắm
+            </a>
+        </div>
+
+        <div class="cart-grid" id="cartContentState">
+            <!-- Column 1: Items List -->
+            <div class="cart-table-card">
+                <div class="table-responsive">
+                    <table class="cart-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 80px;">Ảnh</th>
+                                <th>Sản phẩm</th>
+                                <th style="width: 120px;">Đơn giá</th>
+                                <th style="width: 130px;">Số lượng</th>
+                                <th style="width: 130px;">Thành tiền</th>
+                                <th style="width: 60px; text-align: center;">Xóa</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cartItemsList">
+                            @foreach (var item in Model)
+                            {
+                                <tr class="cart-item-row" data-product-id="@item.ProductId" style="transition: all 0.3s ease;">
+                                    <td>
+                                        <a href="@Url.Action("Details", "Products", new { id = item.ProductId })">
+                                            <img src="~/product/images/@item.ImagePath" class="cart-item-thumb" alt="@item.ProductName" />
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <h4 style="font-size: 0.95rem; font-weight: 600; margin: 0; font-family: 'Plus Jakarta Sans', sans-serif;">
+                                            <a href="@Url.Action("Details", "Products", new { id = item.ProductId })" style="color: inherit; text-decoration: none; transition: var(--transition-fast);" onmouseover="this.style.color='var(--accent-purple)'" onmouseout="this.style.color='inherit'">
+                                                @item.ProductName
+                                            </a>
+                                        </h4>
+                                    </td>
+                                    <td style="white-space: nowrap;">
+                                        <span style="font-weight: 500;">@(item.Price.ToString("#,##0")) đ</span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-1">
+                                            <button type="button" class="cart-qty-btn btn-decrease" data-product-id="@item.ProductId" style="user-select: none;">-</button>
+                                            <input type="text" class="cart-qty-input quantity-input" data-product-id="@item.ProductId" value="@item.Quantity" readonly />
+                                            <button type="button" class="cart-qty-btn btn-increase" data-product-id="@item.ProductId" style="user-select: none;">+</button>
+                                        </div>
+                                    </td>
+                                    <td style="white-space: nowrap;">
+                                        <span class="item-total-price" data-product-id="@item.ProductId" style="font-weight: 700; color: var(--text-primary);">@(item.TotalPrice.ToString("#,##0")) đ</span>
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <button type="button" class="cart-btn-remove btn-remove-item" data-product-id="@item.ProductId" title="Xóa sản phẩm">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Column 2: Order Summary Card -->
+            <div class="cart-summary-card">
+                <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--text-primary); font-family: 'Plus Jakarta Sans', sans-serif;">
+                    ⚡ Tóm tắt đơn hàng
+                </h3>
+                <div class="summary-row">
+                    <span>Tạm tính</span>
+                    <span id="cartSubtotal">@(ViewBag.CartTotal.ToString("#,##0")) đ</span>
+                </div>
+                <div class="summary-row">
+                    <span>Phí vận chuyển</span>
+                    <span style="color: var(--accent-emerald); font-weight: 600;">Miễn phí</span>
+                </div>
+                <div class="summary-total-row">
+                    <span>Tổng thanh toán</span>
+                    <span class="summary-total-price" id="cartTotal">@(ViewBag.CartTotal.ToString("#,##0")) đ</span>
+                </div>
+
+                <div style="margin-top: 1.75rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                    <button type="button" class="btn-primary-custom justify-content-center w-100 py-3" style="border-radius: 12px; font-weight: 600; font-size: 1rem;">
+                        <i class="fa-solid fa-credit-card"></i> Tiến hành thanh toán
+                    </button>
+                    <button type="button" class="btn-secondary-custom justify-content-center w-100 btn-clear-cart" style="border-radius: 12px; font-size: 0.9rem;">
+                        <i class="fa-solid fa-trash-arrow-up"></i> Xóa toàn bộ giỏ hàng
+                    </button>
+                    <a href="@Url.Action("Index", "Products")" class="btn-secondary-custom justify-content-center w-100" style="border-radius: 12px; text-decoration: none; font-size: 0.9rem;">
+                        <i class="fa-solid fa-basket-shopping"></i> Tiếp tục mua sắm
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

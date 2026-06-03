@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - KHA Badminton Shop</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for sleek icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/AspNetMvcApp.styles.css" asp-append-version="true" />
+</head>
+<body class="theme-light">
+    <!-- Premium Glassmorphic Header -->
+    <header class="main-header">
+        <div class="header-container">
+            <a class="logo-brand" asp-area="" asp-controller="Products" asp-action="Index">
+                <span class="logo-glow"></span>
+                <svg class="logo-icon-svg" viewBox="0 0 24 24" style="width: 28px; height: 28px; margin-right: 0.65rem; z-index: 1;" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#00a651" />
+                      <stop offset="100%" stop-color="#00c853" />
+                    </linearGradient>
+                  </defs>
+                  <!-- Racket Group -->
+                  <g transform="rotate(45 15 9)" stroke="url(#logoGrad)" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <ellipse cx="15" cy="9" rx="4" ry="5" />
+                    <!-- Strings -->
+                    <line x1="12" y1="9" x2="18" y2="9" stroke-width="0.8" opacity="0.6" />
+                    <line x1="15" y1="4" x2="15" y2="14" stroke-width="0.8" opacity="0.6" />
+                    <line x1="13.5" y1="5.5" x2="16.5" y2="12.5" stroke-width="0.8" opacity="0.6" />
+                    <line x1="16.5" y1="5.5" x2="13.5" y2="12.5" stroke-width="0.8" opacity="0.6" />
+                  </g>
+                  <!-- Shaft and Handle -->
+                  <line x1="11.5" y1="12.5" x2="6.5" y2="17.5" stroke="url(#logoGrad)" stroke-width="1.8" stroke-linecap="round" />
+                  <line x1="6.5" y1="17.5" x2="4.5" y2="19.5" stroke="url(#logoGrad)" stroke-width="2.8" stroke-linecap="square" />
+                  <!-- Shuttlecock -->
+                  <g transform="translate(1, -1)" stroke="url(#logoGrad)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <!-- Cork base -->
+                    <path d="M6 10.5 C 6 11.5, 8 11.5, 8 10.5 Z" fill="url(#logoGrad)" stroke="none" />
+                    <!-- Feathers -->
+                    <path d="M6 10 L 4.5 6 H 9.5 L 8 10 Z" stroke-width="1.2" />
+                    <line x1="5.5" y1="6" x2="6.5" y2="10" stroke-width="0.8" />
+                    <line x1="8.5" y1="6" x2="7.5" y2="10" stroke-width="0.8" />
+                  </g>
+                </svg>
+                <span class="brand-text">KHA Sport</span>
+            </a>
+            
+            <div class="user-profile-sec">
+                <a class="nav-link-custom @(ViewContext.RouteData.Values["controller"]?.ToString() == "Products" ? "active" : "")" asp-area="" asp-controller="Products" asp-action="Index" style="padding: 0.5rem 0.9rem; font-size: 0.9rem; font-weight: 600; border-radius: 10px; display: inline-flex; align-items: center; gap: 0.4rem; text-decoration: none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px; display: inline-block;">
+                      <g transform="rotate(45 15 9)">
+                        <ellipse cx="15" cy="9" rx="4" ry="5" />
+                        <line x1="12" y1="9" x2="18" y2="9" stroke-width="0.8" opacity="0.6" />
+                        <line x1="15" y1="4" x2="15" y2="14" stroke-width="0.8" opacity="0.6" />
+                        <line x1="13.5" y1="5.5" x2="16.5" y2="12.5" stroke-width="0.8" opacity="0.6" />
+                        <line x1="16.5" y1="5.5" x2="13.5" y2="12.5" stroke-width="0.8" opacity="0.6" />
+                      </g>
+                      <line x1="11.5" y1="12.5" x2="6.5" y2="17.5" stroke-width="1.8" />
+                      <line x1="6.5" y1="17.5" x2="4.5" y2="19.5" stroke-width="2.8" stroke-linecap="square" />
+                    </svg>
+                    Sản Phẩm
+                </a>
+
+                @{
+                    var sessionCart = Context.Session.GetObjectFromJson<List<CartItem>>("Cart");
+                    var initialCartCount = sessionCart?.Sum(i => i.Quantity) ?? 0;
+                }
+                <!-- Shopping Cart Icon with Badge -->
+                <a href="@Url.Action("Index", "Cart")" class="cart-badge-wrapper" title="Giỏ hàng" style="margin-right: 0.5rem;">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span id="cartCountBadge" class="cart-count" style="@(initialCartCount > 0 ? "" : "display: none;")">@initialCartCount</span>
+                </a>
+
+                <!-- Premium High-Tech Theme Switcher -->
+                <button id="themeToggleBtn" class="btn-theme-toggle" title="Chuyển chế độ sáng/tối">
+                    <i class="fa-regular fa-moon theme-icon-dark"></i>
+                    <i class="fa-regular fa-sun theme-icon-light" style="display: none;"></i>
+                </button>
+ 
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="nav-link-custom" style="font-size: 0.85rem; padding: 0.4rem 0.85rem;">
+                            <i class="fa-solid fa-shield-halved nav-icon" style="color: var(--accent-blue);"></i> Admin
+                        </a>
+                    }
+
+                    <div class="notification-badge">
+                        <i class="fa-regular fa-bell"></i>
+                        <span class="badge-dot"></span>
+                    </div>
+
+                    <a href="@Url.Action("Profile", "Account")" class="user-avatar-wrapper" style="position: relative; text-decoration: none;" title="Trang cá nhân">
+                        <div class="avatar-glow"></div>
+                        @if (User.HasClaim(c => c.Type == "AvatarPath"))
+                        {
+                            <img src="~/product/images/@User.FindFirst("AvatarPath")?.Value" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-light);" />
+                        }
+                        else
+                        {
+                            <span class="user-avatar-initials">@User.Identity.Name?.Substring(0, 2).ToUpper()</span>
+                        }
+                    </a>
+
+                    <form asp-controller="Account" asp-action="Logout" method="post" style="margin: 0;">
+                        <button type="submit" class="btn-secondary-custom" style="font-size: 0.82rem; padding: 0.4rem 0.85rem; border-radius: 8px;">
+                            <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login" class="btn-secondary-custom" style="font-size: 0.85rem; padding: 0.45rem 1rem; border-radius: 10px; text-decoration: none;">
+                        <i class="fa-solid fa-right-to-bracket"></i> Đăng nhập
+                    </a>
+                    <a asp-controller="Account" asp-action="Register" class="btn-primary-custom" style="font-size: 0.85rem; padding: 0.45rem 1rem; border-radius: 10px; text-decoration: none;">
+                        <i class="fa-solid fa-user-plus"></i> Đăng ký
+                    </a>
+                }
+            </div>
+        </div>
+    </header>
+
+    <div class="app-container">
+        <main role="main" class="main-content">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="main-footer">
+        <div class="footer-container">
+            <span class="footer-copy">&copy; 2026 - KHA Sport - Cửa Hàng Thể Thao Cầu Lông Cao Cấp</span>
+            <div class="footer-links">
+                <a href="#">Hỗ trợ kỹ thuật</a>
+            </div>
+        </div>
+    </footer>
+
+    <div class="toast-container-custom" id="toastContainer"></div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+

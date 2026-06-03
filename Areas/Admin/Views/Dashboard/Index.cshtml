@@ -1,0 +1,252 @@
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<style>
+    .dashboard-header {
+        margin-bottom: 2rem;
+    }
+
+    .dashboard-header h1 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+        background: linear-gradient(to right, var(--text-primary), var(--text-secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .dashboard-header p {
+        color: var(--text-secondary);
+        font-size: 0.92rem;
+    }
+
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.25rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-item {
+        background: var(--bg-dark-card);
+        border: 1px solid var(--border-light);
+        border-radius: 16px;
+        padding: 1.5rem;
+        position: relative;
+        overflow: hidden;
+        transition: var(--transition-normal);
+    }
+
+    .stat-item:hover {
+        transform: translateY(-3px);
+        border-color: var(--border-glow);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .stat-item-glow {
+        position: absolute;
+        width: 120px;
+        height: 120px;
+        top: -60px;
+        right: -60px;
+        border-radius: 50%;
+        filter: blur(35px);
+        opacity: 0.15;
+        pointer-events: none;
+    }
+
+    .stat-item:hover .stat-item-glow {
+        opacity: 0.3;
+    }
+
+    .stat-item-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+        margin-bottom: 1rem;
+    }
+
+    .stat-item-value {
+        font-size: 2rem;
+        font-weight: 700;
+        font-family: 'Outfit', sans-serif;
+        color: var(--text-primary);
+        margin-bottom: 0.15rem;
+    }
+
+    .stat-item-label {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+
+    .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.25rem;
+    }
+
+    .quick-action-card {
+        background: var(--bg-dark-card);
+        border: 1px solid var(--border-light);
+        border-radius: 16px;
+        padding: 1.75rem;
+        transition: var(--transition-normal);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+    }
+
+    .quick-action-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(59, 130, 246, 0.2);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .quick-action-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        flex-shrink: 0;
+    }
+
+    .quick-action-text h3 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.25rem;
+    }
+
+    .quick-action-text p {
+        font-size: 0.82rem;
+        color: var(--text-secondary);
+        margin: 0;
+    }
+
+    .section-title {
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .section-title i {
+        color: var(--accent-blue);
+    }
+</style>
+
+<div class="dashboard-header">
+    <h1>Dashboard Quản Trị</h1>
+    <p>Xin chào, @User.Identity?.Name — Đây là hệ thống quản trị KHA Sport của bạn.</p>
+</div>
+
+<!-- Stats Grid -->
+<div class="stats-row">
+    <div class="stat-item">
+        <div class="stat-item-glow" style="background: var(--accent-blue);"></div>
+        <div class="stat-item-icon" style="background: rgba(0, 166, 81, 0.12); color: var(--accent-blue);">
+            <i class="fa-solid fa-box-open"></i>
+        </div>
+        <div class="stat-item-value">@ViewBag.TotalProducts</div>
+        <div class="stat-item-label">Tổng Sản Phẩm</div>
+    </div>
+
+    <div class="stat-item">
+        <div class="stat-item-glow" style="background: var(--accent-purple);"></div>
+        <div class="stat-item-icon" style="background: rgba(255, 107, 0, 0.12); color: var(--accent-purple);">
+            <i class="fa-solid fa-layer-group"></i>
+        </div>
+        <div class="stat-item-value">@ViewBag.TotalCategories</div>
+        <div class="stat-item-label">Danh Mục</div>
+    </div>
+
+    <div class="stat-item">
+        <div class="stat-item-glow" style="background: var(--accent-emerald);"></div>
+        <div class="stat-item-icon" style="background: rgba(16, 185, 129, 0.12); color: var(--accent-emerald);">
+            <i class="fa-solid fa-users"></i>
+        </div>
+        <div class="stat-item-value">@ViewBag.TotalUsers</div>
+        <div class="stat-item-label">Tổng Người Dùng</div>
+    </div>
+
+    <div class="stat-item">
+        <div class="stat-item-glow" style="background: var(--accent-orange);"></div>
+        <div class="stat-item-icon" style="background: rgba(230, 57, 70, 0.12); color: var(--accent-orange);">
+            <i class="fa-solid fa-star"></i>
+        </div>
+        <div class="stat-item-value">@ViewBag.FeaturedProducts</div>
+        <div class="stat-item-label">Sản Phẩm Nổi Bật</div>
+    </div>
+</div>
+
+<!-- Stock Overview -->
+<div class="stats-row" style="grid-template-columns: repeat(3, 1fr);">
+    <div class="stat-item">
+        <div class="stat-item-icon" style="background: rgba(16, 185, 129, 0.12); color: var(--accent-emerald);">
+            <i class="fa-solid fa-check-circle"></i>
+        </div>
+        <div class="stat-item-value">@ViewBag.InStockProducts</div>
+        <div class="stat-item-label">Còn Hàng</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-item-icon" style="background: rgba(255, 107, 0, 0.12); color: var(--accent-purple);">
+            <i class="fa-solid fa-exclamation-triangle"></i>
+        </div>
+        <div class="stat-item-value">@ViewBag.LowStockProducts</div>
+        <div class="stat-item-label">Sắp Hết Hàng</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-item-icon" style="background: rgba(239, 68, 68, 0.12); color: #ef4444;">
+            <i class="fa-solid fa-times-circle"></i>
+        </div>
+        <div class="stat-item-value">@ViewBag.OutOfStockProducts</div>
+        <div class="stat-item-label">Hết Hàng</div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<h2 class="section-title"><i class="fa-solid fa-bolt"></i> Hành Động Nhanh</h2>
+<div class="quick-actions">
+    <a asp-area="Admin" asp-controller="ProductManagement" asp-action="Index" class="quick-action-card">
+        <div class="quick-action-icon" style="background: rgba(0, 166, 81, 0.12); color: var(--accent-blue);">
+            <i class="fa-solid fa-list"></i>
+        </div>
+        <div class="quick-action-text">
+            <h3>Quản Lý Sản Phẩm</h3>
+            <p>Xem, thêm, sửa, xóa sản phẩm trong hệ thống</p>
+        </div>
+    </a>
+
+    <a asp-area="Admin" asp-controller="ProductManagement" asp-action="Create" class="quick-action-card">
+        <div class="quick-action-icon" style="background: rgba(16, 185, 129, 0.12); color: var(--accent-emerald);">
+            <i class="fa-solid fa-plus"></i>
+        </div>
+        <div class="quick-action-text">
+            <h3>Thêm Sản Phẩm Mới</h3>
+            <p>Tạo một sản phẩm mới cho cửa hàng</p>
+        </div>
+    </a>
+
+    <a asp-area="" asp-controller="Products" asp-action="Index" class="quick-action-card">
+        <div class="quick-action-icon" style="background: rgba(255, 107, 0, 0.12); color: var(--accent-purple);">
+            <i class="fa-solid fa-store"></i>
+        </div>
+        <div class="quick-action-text">
+            <h3>Xem Cửa Hàng</h3>
+            <p>Truy cập trang cửa hàng công khai</p>
+        </div>
+    </a>
+</div>

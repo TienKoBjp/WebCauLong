@@ -1,0 +1,145 @@
+@{
+    ViewData["Title"] = "Truy Cập Bị Từ Chối";
+}
+
+<style>
+    .denied-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 60vh;
+        padding: 2rem;
+    }
+
+    .denied-card {
+        background: var(--bg-dark-card);
+        border: 1px solid rgba(239, 68, 68, 0.15);
+        border-radius: 24px;
+        padding: 3.5rem;
+        width: 100%;
+        max-width: 500px;
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        box-shadow: var(--shadow-soft);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .denied-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle at 50% 30%, rgba(239, 68, 68, 0.04) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    .denied-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 20px;
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 2rem;
+        color: #ef4444;
+    }
+
+    .denied-title {
+        font-size: 1.65rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        font-family: 'Outfit', sans-serif;
+        margin-bottom: 0.75rem;
+    }
+
+    .denied-desc {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+        max-width: 380px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .denied-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        position: relative;
+    }
+
+    .denied-btn-home {
+        background: var(--grad-primary);
+        border: none;
+        color: #fff;
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        font-family: 'Outfit', sans-serif;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: var(--transition-fast);
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .denied-btn-home:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        color: #fff;
+    }
+
+    .denied-btn-back {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--border-light);
+        color: var(--text-primary);
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        font-family: 'Outfit', sans-serif;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: var(--transition-fast);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .denied-btn-back:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.15);
+        color: var(--text-primary);
+    }
+</style>
+
+<div class="denied-container">
+    <div class="denied-card">
+        <div class="denied-icon">
+            <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <h1 class="denied-title">Truy Cập Bị Từ Chối</h1>
+        <p class="denied-desc">
+            Bạn không có quyền truy cập vào trang này. Vui lòng liên hệ quản trị viên nếu bạn cho rằng đây là lỗi.
+        </p>
+        <div class="denied-actions">
+            <a asp-controller="Products" asp-action="Index" class="denied-btn-home">
+                <i class="fa-solid fa-home"></i> Trang Chủ
+            </a>
+            <a href="javascript:history.back()" class="denied-btn-back">
+                <i class="fa-solid fa-arrow-left"></i> Quay Lại
+            </a>
+        </div>
+    </div>
+</div>

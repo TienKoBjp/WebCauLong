@@ -1,0 +1,339 @@
+@model AspNetMvcApp.Models.Product
+@{
+    ViewData["Title"] = "Sửa Sản Phẩm";
+}
+
+<style>
+    .form-page-header {
+        margin-bottom: 2rem;
+    }
+
+    .form-page-header h1 {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.25rem;
+    }
+
+    .form-page-header p {
+        color: var(--text-secondary);
+        font-size: 0.88rem;
+    }
+
+    .form-card {
+        background: var(--bg-dark-card);
+        border: 1px solid var(--border-light);
+        border-radius: 20px;
+        padding: 2rem;
+        max-width: 700px;
+        backdrop-filter: var(--glass-blur);
+    }
+
+    .form-group {
+        margin-bottom: 1.35rem;
+    }
+
+    .form-label {
+        display: block;
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-bottom: 0.4rem;
+    }
+
+    .form-control-custom {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border-light);
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        color: var(--text-primary);
+        font-size: 0.9rem;
+        outline: none;
+        transition: var(--transition-normal);
+    }
+
+    .form-control-custom:focus {
+        border-color: rgba(0, 166, 81, 0.5);
+        background: rgba(255, 255, 255, 0.06);
+        box-shadow: 0 0 15px rgba(0, 166, 81, 0.12);
+    }
+
+    .form-control-custom option {
+        background: #ffffff;
+        color: var(--text-primary);
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .form-check-custom {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+    }
+
+    .form-check-custom input {
+        accent-color: var(--accent-blue);
+        width: 16px;
+        height: 16px;
+    }
+
+    .form-check-custom label {
+        color: var(--text-secondary);
+        font-size: 0.88rem;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1.75rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid var(--border-light);
+    }
+
+    .btn-submit {
+        background: var(--grad-primary);
+        border: none;
+        color: #fff;
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        font-family: 'Outfit', sans-serif;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: var(--transition-fast);
+        box-shadow: 0 4px 15px rgba(0, 166, 81, 0.3);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 166, 81, 0.4);
+    }
+
+    .btn-cancel {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--border-light);
+        color: var(--text-primary);
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        font-family: 'Outfit', sans-serif;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: var(--transition-fast);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-cancel:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--text-primary);
+    }
+
+    .validation-error {
+        color: #ef4444;
+        font-size: 0.78rem;
+        margin-top: 0.3rem;
+    }
+
+    .edit-product-preview {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--border-light);
+        border-radius: 12px;
+    }
+
+    .edit-product-preview img {
+        width: 56px;
+        height: 56px;
+        object-fit: contain;
+        border-radius: 10px;
+        background: #f5f7f5;
+        padding: 4px;
+        border: 1px solid var(--border-light);
+    }
+
+    .edit-product-preview-info {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+    }
+
+    .edit-product-preview-info strong {
+        color: var(--text-primary);
+        font-family: 'Outfit', sans-serif;
+        display: block;
+        margin-bottom: 0.15rem;
+    }
+</style>
+
+<div class="form-page-header">
+    <h1><i class="fa-solid fa-pen-to-square" style="color: var(--accent-blue);"></i> Sửa Sản Phẩm</h1>
+    <p>Cập nhật thông tin sản phẩm bên dưới.</p>
+</div>
+
+<div class="form-card">
+    <div class="edit-product-preview">
+        <img src="~/product/images/@Model.ImagePath" alt="@Model.Name" />
+        <div class="edit-product-preview-info">
+            <strong>@Model.Name</strong>
+            ID: #@Model.Id
+        </div>
+    </div>
+
+    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="form-group">
+            <label asp-for="Name" class="form-label">Tên Sản Phẩm</label>
+            <input asp-for="Name" class="form-control-custom" />
+            <span asp-validation-for="Name" class="validation-error"></span>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label asp-for="CategoryId" class="form-label">Danh Mục</label>
+                <select asp-for="CategoryId" asp-items="@ViewBag.Categories" class="form-control-custom"></select>
+                <span asp-validation-for="CategoryId" class="validation-error"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Price" class="form-label">Giá (VNĐ)</label>
+                <input asp-for="Price" class="form-control-custom" type="number" step="1000" />
+                <span asp-validation-for="Price" class="validation-error"></span>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label asp-for="Rating" class="form-label">Đánh Giá (0 - 5)</label>
+                <input asp-for="Rating" class="form-control-custom" type="number" step="0.1" min="0" max="5" />
+                <span asp-validation-for="Rating" class="validation-error"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StockStatus" class="form-label">Trạng Thái Kho</label>
+                <select asp-for="StockStatus" class="form-control-custom">
+                    <option value="InStock">Còn hàng</option>
+                    <option value="LowStock">Sắp hết hàng</option>
+                    <option value="OutOfStock">Hết hàng</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Tải Ảnh Chính Mới Lên Từ Máy Tính</label>
+            <div class="custom-file-upload">
+                <input type="file" name="imageFile" id="imageFileInput" class="file-input-hidden" accept="image/*" />
+                <label for="imageFileInput" class="file-upload-label">
+                    <i class="fa-solid fa-image"></i>
+                    <span class="file-upload-text">Chọn ảnh chính mới...</span>
+                </label>
+                <div class="file-upload-preview" id="imageFilePreview">Chưa chọn ảnh chính mới nào</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Tải Thêm Nhiều Ảnh Chi Tiết Sản Phẩm (Tùy chọn)</label>
+            <div class="custom-file-upload">
+                <input type="file" name="detailImages" id="detailImagesInput" class="file-input-hidden" accept="image/*" multiple />
+                <label for="detailImagesInput" class="file-upload-label">
+                    <i class="fa-solid fa-images"></i>
+                    <span class="file-upload-text">Chọn thêm ảnh chi tiết...</span>
+                </label>
+                <div class="file-upload-preview" id="detailImagesPreview">Chưa chọn thêm ảnh chi tiết nào</div>
+            </div>
+        </div>
+
+        @if (Model.ProductImages != null && Model.ProductImages.Count > 0)
+        {
+            <div class="form-group">
+                <label class="form-label">Ảnh Chi Tiết Hiện Tại</label>
+                <div class="edit-detail-images-row" style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem; padding: 1rem; background: rgba(255,255,255,0.02); border: 1px solid var(--border-light); border-radius: 12px;">
+                    @foreach (var img in Model.ProductImages)
+                    {
+                        <div class="edit-detail-image-item" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; position: relative;">
+                            <img src="~/product/images/@img.ImagePath" style="width: 70px; height: 70px; object-fit: contain; border-radius: 8px; background: #f5f7f5; padding: 4px; border: 1px solid var(--border-light);" />
+                            <div class="edit-detail-image-actions" style="display: flex; gap: 0.3rem;">
+                                @if (img.ImagePath == Model.ImagePath)
+                                {
+                                    <span class="badge bg-success d-inline-flex align-items-center gap-1" style="font-size: 0.7rem; padding: 0.35rem 0.5rem; border-radius: 6px; font-weight: 600;">
+                                        <i class="fa-solid fa-circle-check"></i> Ảnh chính
+                                    </span>
+                                }
+                                else
+                                {
+                                    <button type="submit" formaction="@Url.Action("SetMainImage", "ProductManagement", new { id = img.Id })" class="btn-set-main" style="background: rgba(0, 166, 81, 0.1); border: 1px solid rgba(0, 166, 81, 0.2); color: #00a651; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 0.2rem;" title="Đặt làm ảnh đại diện sản phẩm">
+                                        <i class="fa-solid fa-star"></i> Chọn chính
+                                    </button>
+                                }
+                                <button type="submit" formaction="@Url.Action("DeleteProductImage", "ProductManagement", new { id = img.Id })" class="btn-delete-img" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 0.2rem;" onclick="return confirm('Xóa ảnh chi tiết này?');">
+                                    <i class="fa-solid fa-trash-can"></i> Xóa
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        <div class="form-group">
+            <label asp-for="ImagePath" class="form-label">Tên File Ảnh (trong /product/images/)</label>
+            <input asp-for="ImagePath" id="imagePathInput" class="form-control-custom" />
+            <span asp-validation-for="ImagePath" class="validation-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Description" class="form-label">Mô Tả</label>
+            <textarea asp-for="Description" class="form-control-custom" rows="4"></textarea>
+            <span asp-validation-for="Description" class="validation-error"></span>
+        </div>
+
+        <div class="form-check-custom">
+            <input asp-for="IsFeatured" type="checkbox" />
+            <label asp-for="IsFeatured">Sản phẩm nổi bật</label>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">
+                <i class="fa-solid fa-floppy-disk"></i> Lưu Thay Đổi
+            </button>
+            <a asp-action="Index" class="btn-cancel">
+                <i class="fa-solid fa-xmark"></i> Hủy
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.getElementById('imageFileInput').addEventListener('change', function (e) {
+        if (e.target.files && e.target.files[0]) {
+            var fileName = e.target.files[0].name;
+            document.getElementById('imagePathInput').value = fileName;
+            document.getElementById('imageFilePreview').textContent = "Đã chọn: " + fileName;
+        } else {
+            document.getElementById('imageFilePreview').textContent = "Chưa chọn ảnh chính mới nào";
+        }
+    });
+
+    document.getElementById('detailImagesInput').addEventListener('change', function (e) {
+        if (e.target.files && e.target.files.length > 0) {
+            var count = e.target.files.length;
+            var fileNames = Array.from(e.target.files).map(f => f.name).join(", ");
+            document.getElementById('detailImagesPreview').textContent = "Đã chọn (" + count + "): " + fileNames;
+        } else {
+            document.getElementById('detailImagesPreview').textContent = "Chưa chọn thêm ảnh chi tiết nào";
+        }
+    });
+</script>

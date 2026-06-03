@@ -1,0 +1,745 @@
+@model AspNetMvcApp.Models.ProductDetailsViewModel
+@{
+    ViewData["Title"] = Model.Product.Name;
+}
+
+<!-- Custom Styles for Premium Product Details -->
+<style>
+    .details-container {
+        background: var(--bg-dark-card);
+        border: 1px solid var(--border-light);
+        border-radius: 24px;
+        padding: 2.5rem;
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        box-shadow: var(--shadow-soft);
+        margin-bottom: 3.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .details-glow {
+        position: absolute;
+        width: 350px;
+        height: 350px;
+        top: -150px;
+        right: -150px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(0, 166, 81, 0.12) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    .details-grid {
+        display: grid;
+        grid-template-columns: 1.1fr 1.3fr;
+        gap: 3.5rem;
+        align-items: center;
+    }
+
+    @@media (max-width: 992px) {
+        .details-grid {
+            grid-template-columns: 1fr;
+            gap: 2.5rem;
+        }
+    }
+
+    /* Left Column: Premium Image Box & Gallery Wrapper */
+    .details-left-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        width: 100%;
+    }
+
+    .details-image-box {
+        background: rgba(0, 0, 0, 0.25);
+        border: 1px solid rgba(255, 255, 255, 0.03);
+        border-radius: 20px;
+        padding: 3rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 480px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    @@media (max-width: 576px) {
+        .details-image-box {
+            height: 300px;
+            padding: 1.5rem;
+        }
+    }
+
+    .details-thumbnails-row {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        padding: 0.75rem;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 16px;
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+    }
+
+    .details-thumbnail-item {
+        width: 80px;
+        height: 80px;
+        background: rgba(0, 0, 0, 0.3);
+        border: 1.5px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .details-thumbnail-item::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle, rgba(0, 166, 81, 0.15) 0%, transparent 80%);
+        opacity: 0;
+        transition: opacity 0.25s ease;
+        pointer-events: none;
+    }
+
+    .details-thumbnail-item:hover {
+        transform: translateY(-3px) scale(1.05);
+        border-color: rgba(0, 166, 81, 0.4);
+    }
+
+    .details-thumbnail-item:hover::after {
+        opacity: 1;
+    }
+
+    .details-thumbnail-item.active {
+        border-color: #00a651;
+        background: rgba(0, 166, 81, 0.08);
+        box-shadow: 0 0 15px rgba(0, 166, 81, 0.3);
+    }
+
+    .details-thumbnail-img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        transition: transform 0.25s ease;
+        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+    }
+
+    .details-thumbnail-item:hover .details-thumbnail-img {
+        transform: scale(1.08);
+    }
+
+    .details-image {
+        max-width: 90%;
+        max-height: 90%;
+        object-fit: contain;
+        filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.4));
+        transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), filter 0.2s ease;
+    }
+
+    .details-image.fade-out {
+        opacity: 0;
+        transform: scale(0.96);
+    }
+
+    .details-image-box:hover .details-image {
+        transform: scale(1.04);
+        filter: drop-shadow(0 25px 50px rgba(0, 166, 81, 0.35));
+    }
+
+    /* Right Column: Text & Action Content */
+    .details-info {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+
+    .badge-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: center;
+    }
+
+    .details-cat-badge {
+        background: rgba(0, 166, 81, 0.15);
+        border: 1px solid rgba(0, 166, 81, 0.3);
+        color: #d1fae5;
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.4rem 1rem;
+        border-radius: 50px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        text-decoration: none;
+        transition: var(--transition-fast);
+    }
+
+    .details-cat-badge:hover {
+        background: rgba(0, 166, 81, 0.25);
+        color: #ffffff;
+    }
+
+    .details-stock-badge {
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.4rem 1rem;
+        border-radius: 50px;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .details-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--text-primary);
+        font-family: 'Outfit', sans-serif;
+        line-height: 1.2;
+        margin: 0;
+    }
+
+    .details-rating-bar {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: rgba(255, 215, 0, 0.06);
+        border: 1px solid rgba(255, 215, 0, 0.15);
+        padding: 0.3rem 0.75rem;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: #ffd700;
+        width: fit-content;
+    }
+
+    .details-price-tag {
+        font-size: 2.2rem;
+        font-weight: 800;
+        background: var(--grad-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-family: 'Outfit', sans-serif;
+        margin: 0.5rem 0;
+    }
+
+    .details-description {
+        color: var(--text-secondary);
+        font-size: 1.05rem;
+        line-height: 1.7;
+        margin: 0.5rem 0 1.5rem 0;
+    }
+
+    .action-row {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        padding-top: 2rem;
+    }
+
+    .btn-buy-now {
+        background: var(--grad-primary);
+        border: none;
+        color: #ffffff;
+        padding: 0.9rem 2.2rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 12px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        transition: var(--transition-normal);
+        box-shadow: 0 4px 20px rgba(0, 166, 81, 0.35);
+    }
+
+    .btn-buy-now:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 25px rgba(0, 166, 81, 0.5);
+    }
+
+    /* Related Products Showcase */
+    .related-title-sec {
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+    }
+
+    .related-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        font-family: 'Outfit', sans-serif;
+        margin: 0;
+        position: relative;
+    }
+
+    .related-title::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 60px;
+        height: 4px;
+        background: var(--grad-primary);
+        border-radius: 10px;
+    }
+
+    /* Cohesive card styling for related products */
+    .product-grid-related {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 1.75rem;
+    }
+
+    .product-card {
+        background: var(--bg-dark-card);
+        border: 1px solid var(--border-light);
+        border-radius: 28px;
+        overflow: hidden;
+        transition: var(--transition-normal);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        position: relative;
+        text-decoration: none !important;
+        padding: 0.85rem;
+    }
+
+    .product-card:hover {
+        background: var(--bg-dark-card-hover);
+        transform: translateY(-8px);
+        border-color: rgba(0, 166, 81, 0.35);
+        box-shadow: 0 20px 35px -10px rgba(0, 166, 81, 0.15);
+    }
+
+    .product-card-glow {
+        position: absolute;
+        width: 180px;
+        height: 180px;
+        bottom: -90px;
+        left: -90px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(0, 166, 81, 0.08) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    .product-card:hover .product-card-glow {
+        background: radial-gradient(circle, rgba(255, 107, 0, 0.12) 0%, transparent 70%);
+    }
+
+    .product-image-container {
+        position: relative;
+        height: 240px;
+        background: rgba(0, 0, 0, 0.04);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        padding: 1.5rem;
+        transition: var(--transition-normal);
+    }
+
+    body.theme-dark .product-image-container {
+        background: rgba(255, 255, 255, 0.02);
+    }
+
+    .product-image-small {
+        max-width: 90%;
+        max-height: 90%;
+        object-fit: contain;
+        transition: var(--transition-normal);
+        filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15));
+    }
+
+    .product-card:hover .product-image-small {
+        transform: scale(1.08);
+        filter: drop-shadow(0 15px 30px rgba(0, 166, 81, 0.3));
+    }
+
+    .badge-container-top {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        right: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 5;
+    }
+
+    .product-badge-cat {
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 0.35rem 0.75rem;
+        border-radius: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        transition: var(--transition-fast);
+        display: inline-block;
+    }
+    
+    /* Chế độ SÁNG (theme-light): Chữ màu sáng trong khung đen */
+    body.theme-light .product-badge-cat {
+        background: #111827 !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Chế độ TỐI (theme-dark): Chữ màu sáng trong khung đen */
+    body.theme-dark .product-badge-cat {
+        background: rgba(13, 16, 28, 0.85) !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .product-badge-stock {
+        font-size: 0.72rem;
+        font-weight: 600;
+        padding: 0.3rem 0.7rem;
+        border-radius: 8px;
+        backdrop-filter: var(--glass-blur);
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .tech-dot {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        margin-right: 6px;
+        position: relative;
+    }
+
+    .tech-dot::after {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        border-radius: 50%;
+        border: 1px solid currentColor;
+        animation: techPulse 2s infinite ease-in-out;
+        opacity: 0.8;
+    }
+
+    .dot-green {
+        background-color: var(--accent-emerald);
+        color: var(--accent-emerald);
+    }
+
+    .dot-orange {
+        background-color: var(--accent-orange);
+        color: var(--accent-orange);
+    }
+
+    .dot-red {
+        background-color: #ef4444;
+        color: #ef4444;
+    }
+
+    @@keyframes techPulse {
+        0% { transform: scale(1); opacity: 0.8; }
+        50% { transform: scale(2); opacity: 0; }
+        100% { transform: scale(1); opacity: 0; }
+    }
+
+    .product-details {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        justify-content: space-between;
+    }
+
+    .product-title-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .product-name-rel {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        font-family: 'Outfit', sans-serif;
+        margin: 0;
+        line-height: 1.3;
+    }
+
+    .product-rating {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        background: rgba(255, 215, 0, 0.07);
+        border: 1px solid rgba(255, 215, 0, 0.15);
+        padding: 0.2rem 0.5rem;
+        border-radius: 6px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #ffd700;
+    }
+
+    .product-desc {
+        color: var(--text-secondary);
+        font-size: 0.82rem;
+        line-height: 1.5;
+        margin-bottom: 1.25rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        height: 2.45rem;
+    }
+
+    .product-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        padding-top: 1rem;
+    }
+
+    .product-price-box {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .price-label {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+    }
+
+    .product-price {
+        font-size: 1.25rem;
+        font-weight: 700;
+        background: var(--grad-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-family: 'Outfit', sans-serif;
+    }
+
+    .product-btn-cart {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border-light);
+        color: var(--text-primary);
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition-fast);
+    }
+
+    .product-card:hover .product-btn-cart {
+        background: var(--grad-primary);
+        border-color: transparent;
+        color: #ffffff;
+        transform: scale(1.05);
+    }
+</style>
+
+<!-- Details Breadcrumb Section -->
+<div class="dashboard-heading-sec">
+    <div class="welcome-msg">
+        <a href="@Url.Action("Index", "Products")" class="btn-secondary-custom d-inline-flex align-items-center" style="gap: 0.5rem; text-decoration: none; padding: 0.5rem 1.1rem; border-radius: 10px;">
+            <i class="fa-solid fa-arrow-left"></i> Trở về Cửa Hàng
+        </a>
+        <h1 style="margin-top: 1rem; font-size: 2.2rem;">Chi Tiết Sản Phẩm</h1>
+    </div>
+</div>
+
+<!-- Main Details Card -->
+<div class="details-container">
+    <div class="details-glow"></div>
+    <div class="details-grid">
+        <!-- Left: Image Presentation with Premium Gallery -->
+        <div class="details-left-wrapper">
+            <div class="details-image-box">
+                <img id="mainProductImage" src="~/product/images/@Model.Product.ImagePath" alt="@Model.Product.Name" class="details-image" />
+            </div>
+            
+            @if (Model.Product.ProductImages != null && Model.Product.ProductImages.Count > 0)
+            {
+                <div class="details-thumbnails-row">
+                    <!-- The main image is always the first thumbnail, marked active initially -->
+                    <div class="details-thumbnail-item active" onclick="changeMainImage(this, '@Url.Content("~/product/images/" + Model.Product.ImagePath)')">
+                        <img src="~/product/images/@Model.Product.ImagePath" class="details-thumbnail-img" alt="Main cover" />
+                    </div>
+                    
+                    @foreach (var img in Model.Product.ProductImages.OrderBy(i => i.DisplayOrder))
+                    {
+                        @if (img.ImagePath != Model.Product.ImagePath)
+                        {
+                            <div class="details-thumbnail-item" onclick="changeMainImage(this, '@Url.Content("~/product/images/" + img.ImagePath)')">
+                                <img src="~/product/images/@img.ImagePath" class="details-thumbnail-img" alt="Detail view" />
+                            </div>
+                        }
+                    }
+                </div>
+            }
+        </div>
+
+        <!-- Right: Detail Infos -->
+        <div class="details-info">
+            <div class="badge-row">
+                <a href="@Url.Action("Index", "Products", new { category = Model.Product.Category?.Name })" class="details-cat-badge">
+                    <i class="fa-solid fa-tag"></i> @(Model.Product.Category?.Name ?? "Sản phẩm")
+                </a>
+                
+                @if (Model.Product.StockStatus == "InStock")
+                {
+                    <span class="details-stock-badge stock-instock"><span class="tech-dot dot-green"></span>Còn hàng tại showroom</span>
+                }
+                else if (Model.Product.StockStatus == "LowStock")
+                {
+                    <span class="details-stock-badge stock-lowstock"><span class="tech-dot dot-orange"></span>Sắp hết hàng - Đặt ngay</span>
+                }
+                else
+                {
+                    <span class="details-stock-badge stock-outofstock"><span class="tech-dot dot-red"></span>Tạm hết hàng</span>
+                }
+            </div>
+
+            <h2 class="details-title">@Model.Product.Name</h2>
+
+            <div class="details-rating-bar">
+                <i class="fa-solid fa-star"></i>
+                <span>@Model.Product.Rating.ToString("0.0") / 5.0 (Đánh giá từ chuyên gia)</span>
+            </div>
+
+            <div class="details-price-tag">
+                @(Model.Product.Price.ToString("#,##0")) đ
+            </div>
+
+            <p class="details-description">
+                @Model.Product.Description
+            </p>
+
+            <div class="action-row">
+                <button class="btn-buy-now btn-add-to-cart" data-product-id="@Model.Product.Id">
+                    <i class="fa-solid fa-cart-shopping"></i> Thêm Vào Giỏ Hàng
+                </button>
+                <a href="@Url.Action("Index", "Products")" class="btn-secondary-custom justify-content-center" style="border-radius: 12px; padding: 0.9rem 1.8rem; text-decoration: none;">
+                    Tiếp Tục Mua Sắm
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Related Products Block -->
+<div class="related-section">
+    <div class="related-title-sec">
+        <h3 class="related-title">Sản Phẩm Cùng Danh Mục</h3>
+        <span style="color: var(--text-muted); font-size: 0.9rem;">Danh mục: @(Model.Product.Category?.Name ?? "General")</span>
+    </div>
+
+    @if (Model.RelatedProducts.Count == 0)
+    {
+        <p style="color: var(--text-muted); font-style: italic;">Không có sản phẩm nào khác cùng danh mục này.</p>
+    }
+    else
+    {
+        <div class="product-grid-related">
+            @foreach (var p in Model.RelatedProducts)
+            {
+                <a href="@Url.Action("Details", "Products", new { id = p.Id })" class="product-card">
+                    <div class="product-card-glow"></div>
+                    
+                    <div class="badge-container-top">
+                        <span class="product-badge-cat">@(p.Category?.Name ?? "Sản phẩm")</span>
+                        
+                        @if (p.StockStatus == "InStock")
+                        {
+                            <span class="product-badge-stock stock-instock"><span class="tech-dot dot-green"></span>Còn hàng</span>
+                        }
+                        else if (p.StockStatus == "LowStock")
+                        {
+                            <span class="product-badge-stock stock-lowstock"><span class="tech-dot dot-orange"></span>Sắp hết</span>
+                        }
+                        else
+                        {
+                            <span class="product-badge-stock stock-outofstock"><span class="tech-dot dot-red"></span>Hết hàng</span>
+                        }
+                    </div>
+
+                    <div class="product-image-container">
+                        <img src="~/product/images/@p.ImagePath" alt="@p.Name" class="product-image-small" />
+                    </div>
+
+                    <div class="product-details">
+                        <div>
+                            <div class="product-title-row">
+                                <h4 class="product-name-rel">@p.Name</h4>
+                                <div class="product-rating">
+                                    <i class="fa-solid fa-star"></i>
+                                    <span>@p.Rating.ToString("0.0")</span>
+                                </div>
+                            </div>
+                            <p class="product-desc">@p.Description</p>
+                        </div>
+
+                        <div class="product-footer">
+                            <div class="product-price-box">
+                                <span class="price-label">Giá sở hữu</span>
+                                <span class="product-price">@(p.Price.ToString("#,##0")) đ</span>
+                            </div>
+                            <button class="product-btn-cart btn-add-to-cart" data-product-id="@p.Id" title="Thêm vào giỏ hàng">
+                                <i class="fa-solid fa-cart-shopping"></i>
+                            </button>
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        function changeMainImage(element, imageUrl) {
+            const mainImage = document.getElementById('mainProductImage');
+            if (!mainImage) return;
+
+            // 1. Add active class to the clicked thumbnail and remove from others
+            const thumbnails = document.querySelectorAll('.details-thumbnail-item');
+            thumbnails.forEach(t => t.classList.remove('active'));
+            element.classList.add('active');
+
+            // 2. Play fade-out animation
+            mainImage.classList.add('fade-out');
+
+            // 3. Change source after fade-out transition completes (200ms)
+            setTimeout(() => {
+                mainImage.src = imageUrl;
+                
+                // 4. Play fade-in animation
+                mainImage.onload = () => {
+                    mainImage.classList.remove('fade-out');
+                };
+                
+                if (mainImage.complete) {
+                    mainImage.classList.remove('fade-out');
+                }
+            }, 200);
+        }
+    </script>
+}

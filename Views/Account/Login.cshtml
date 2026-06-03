@@ -1,0 +1,273 @@
+@model AspNetMvcApp.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Đăng Nhập";
+}
+
+<style>
+    .auth-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 70vh;
+        padding: 2rem;
+    }
+
+    .auth-card {
+        background: var(--bg-dark-card);
+        border: 1px solid var(--border-light);
+        border-radius: 24px;
+        padding: 3rem;
+        width: 100%;
+        max-width: 460px;
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        box-shadow: var(--shadow-soft);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .auth-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle at 30% 20%, rgba(0, 166, 81, 0.06) 0%, transparent 50%),
+                    radial-gradient(circle at 70% 80%, rgba(255, 107, 0, 0.04) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        position: relative;
+    }
+
+    .auth-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 18px;
+        background: var(--grad-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.25rem;
+        font-size: 1.5rem;
+        color: #fff;
+        box-shadow: 0 8px 25px rgba(0, 166, 81, 0.3);
+    }
+
+    .auth-title {
+        font-size: 1.65rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        font-family: 'Outfit', sans-serif;
+        margin-bottom: 0.35rem;
+    }
+
+    .auth-subtitle {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+    }
+
+    .auth-form-group {
+        margin-bottom: 1.35rem;
+        position: relative;
+    }
+
+    .auth-label {
+        display: block;
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-bottom: 0.45rem;
+    }
+
+    .auth-input {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        padding: 0.85rem 1rem;
+        color: var(--text-primary);
+        font-size: 0.95rem;
+        outline: none;
+        transition: var(--transition-normal);
+    }
+
+    .auth-input:focus {
+        border-color: rgba(0, 166, 81, 0.5);
+        background: rgba(255, 255, 255, 0.06);
+        box-shadow: 0 0 20px rgba(0, 166, 81, 0.12);
+    }
+
+    .auth-input::placeholder {
+        color: var(--text-muted);
+    }
+
+    .auth-check-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+    }
+
+    .auth-check-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        cursor: pointer;
+    }
+
+    .auth-check-input {
+        accent-color: var(--accent-blue);
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+    }
+
+    .auth-btn {
+        width: 100%;
+        background: var(--grad-primary);
+        border: none;
+        color: #fff;
+        padding: 0.9rem;
+        font-size: 1rem;
+        font-weight: 600;
+        font-family: 'Outfit', sans-serif;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: var(--transition-fast);
+        box-shadow: 0 4px 20px rgba(0, 166, 81, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .auth-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(0, 166, 81, 0.4);
+    }
+
+    .auth-footer {
+        text-align: center;
+        margin-top: 1.75rem;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        position: relative;
+    }
+
+    .auth-footer a {
+        color: var(--accent-blue);
+        text-decoration: none;
+        font-weight: 600;
+        transition: var(--transition-fast);
+    }
+
+    .auth-footer a:hover {
+        color: var(--accent-purple);
+    }
+
+    .auth-divider {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin: 1.5rem 0;
+        position: relative;
+    }
+
+    .auth-divider::before,
+    .auth-divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--border-light);
+    }
+
+    .auth-divider span {
+        color: var(--text-muted);
+        font-size: 0.8rem;
+    }
+
+    .validation-error {
+        color: #ef4444;
+        font-size: 0.8rem;
+        margin-top: 0.35rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .alert-error {
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        border-radius: 12px;
+        padding: 0.85rem 1rem;
+        color: #ef4444;
+        font-size: 0.85rem;
+        margin-bottom: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        position: relative;
+    }
+</style>
+
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-icon">
+                <i class="fa-solid fa-right-to-bracket"></i>
+            </div>
+            <h1 class="auth-title">Chào Mừng Trở Lại</h1>
+            <p class="auth-subtitle">Đăng nhập vào tài khoản KHA Sport của bạn</p>
+        </div>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div asp-validation-summary="All" class="alert-error">
+                <i class="fa-solid fa-circle-exclamation"></i>
+            </div>
+        }
+
+        <form method="post" asp-action="Login" asp-controller="Account">
+            <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+
+            <div class="auth-form-group">
+                <label asp-for="Email" class="auth-label"></label>
+                <input asp-for="Email" class="auth-input" placeholder="name@example.com" autocomplete="email" />
+                <span asp-validation-for="Email" class="validation-error"></span>
+            </div>
+
+            <div class="auth-form-group">
+                <label asp-for="Password" class="auth-label"></label>
+                <input asp-for="Password" class="auth-input" placeholder="••••••••" autocomplete="current-password" />
+                <span asp-validation-for="Password" class="validation-error"></span>
+            </div>
+
+            <div class="auth-check-row">
+                <label class="auth-check-label">
+                    <input asp-for="RememberMe" class="auth-check-input" />
+                    @Html.DisplayNameFor(m => m.RememberMe)
+                </label>
+            </div>
+
+            <button type="submit" class="auth-btn">
+                <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                Đăng Nhập
+            </button>
+        </form>
+
+        <div class="auth-divider">
+            <span>hoặc</span>
+        </div>
+
+        <div class="auth-footer">
+            Chưa có tài khoản? <a asp-action="Register" asp-controller="Account">Đăng ký ngay</a>
+        </div>
+    </div>
+</div>

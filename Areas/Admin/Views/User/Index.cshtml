@@ -1,0 +1,225 @@
+@model List<AspNetMvcApp.Models.UserVM>
+@{
+    ViewData["Title"] = "Quản Lý Tài Khoản";
+}
+
+<style>
+    .pm-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.75rem;
+    }
+
+    .pm-header h1 {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    .pm-header p {
+        color: var(--text-secondary);
+        font-size: 0.88rem;
+        margin: 0.2rem 0 0;
+    }
+
+    .pm-table-card {
+        background: var(--bg-dark-card);
+        border: 1px solid var(--border-light);
+        border-radius: 16px;
+        overflow: hidden;
+        backdrop-filter: var(--glass-blur);
+    }
+
+    .pm-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .pm-table th {
+        padding: 1rem 1.25rem;
+        color: var(--text-muted);
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-bottom: 1px solid var(--border-light);
+        text-align: left;
+    }
+
+    body.theme-light .pm-table th {
+        background: #f0f7f0;
+        color: #4a554a;
+    }
+
+    .pm-table td {
+        padding: 0.9rem 1.25rem;
+        border-bottom: 1px solid var(--border-light);
+        font-size: 0.9rem;
+        color: var(--text-primary);
+        vertical-align: middle;
+    }
+
+    .pm-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .pm-table tr:hover td {
+        background: rgba(0, 166, 81, 0.03);
+    }
+
+    .pm-badge {
+        padding: 0.25rem 0.6rem;
+        border-radius: 6px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .pm-badge-admin {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .pm-badge-user {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--accent-emerald);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .pm-badge-guest {
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--text-secondary);
+        border: 1px solid var(--border-light);
+    }
+
+    .pm-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .pm-btn-edit {
+        background: rgba(0, 166, 81, 0.08);
+        border: 1px solid rgba(0, 166, 81, 0.2);
+        color: var(--accent-blue);
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: var(--transition-fast);
+        text-decoration: none;
+        font-size: 0.85rem;
+    }
+
+    .pm-btn-edit:hover {
+        background: rgba(0, 166, 81, 0.16);
+        color: var(--accent-blue);
+    }
+
+    .pm-btn-delete {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: var(--transition-fast);
+        text-decoration: none;
+        font-size: 0.85rem;
+    }
+
+    .pm-btn-delete:hover {
+        background: rgba(239, 68, 68, 0.2);
+    }
+
+    .pm-empty {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: var(--text-secondary);
+    }
+
+    .pm-empty i {
+        font-size: 3rem;
+        color: var(--text-muted);
+        margin-bottom: 1rem;
+    }
+</style>
+
+<div class="pm-header">
+    <div>
+        <h1>Quản Lý Tài Khoản</h1>
+        <p>Tổng cộng @Model.Count tài khoản người dùng trong hệ thống</p>
+    </div>
+</div>
+
+<div class="pm-table-card">
+    @if (Model.Count == 0)
+    {
+        <div class="pm-empty">
+            <i class="fa-solid fa-users-slash d-block"></i>
+            <h3>Chưa có tài khoản nào</h3>
+            <p>Hệ thống không tìm thấy tài khoản người dùng nào.</p>
+        </div>
+    }
+    else
+    {
+        <table class="pm-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Email / Tên Đăng Nhập</th>
+                    <th>Vai Trò (Role)</th>
+                    <th>Thao Tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td style="color: var(--text-muted); font-weight: 600;">@user.Id.Substring(0, Math.Min(user.Id.Length, 8))...</td>
+                        <td style="font-weight: 600;">@user.Email</td>
+                        <td>
+                            @if (user.Role == "Admin")
+                            {
+                                <span class="pm-badge pm-badge-admin">
+                                    <i class="fa-solid fa-user-shield"></i> Admin
+                                </span>
+                            }
+                            else if (user.Role == "User")
+                            {
+                                <span class="pm-badge pm-badge-user">
+                                    <i class="fa-solid fa-user"></i> User
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="pm-badge pm-badge-guest">@user.Role</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="pm-actions">
+                                <a asp-action="Edit" asp-route-id="@user.Id" class="pm-btn-edit" title="Sửa Vai Trò">
+                                    <i class="fa-solid fa-user-pen"></i>
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@user.Id" class="pm-btn-delete" title="Xóa">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

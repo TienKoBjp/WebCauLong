@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - KHA Sport Admin</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <style>
+        /* Admin Layout Styles */
+        .admin-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .admin-sidebar {
+            width: 260px;
+            background: var(--bg-dark-surface);
+            border-right: 1px solid var(--border-light);
+            padding: 1.5rem 0;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 50;
+            backdrop-filter: var(--glass-blur);
+            transition: var(--transition-normal);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0 1.5rem 1.5rem;
+            border-bottom: 1px solid var(--border-light);
+            text-decoration: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-brand-icon {
+            width: 42px;
+            height: 42px;
+            background: var(--grad-primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.15rem;
+            box-shadow: 0 4px 15px rgba(0, 166, 81, 0.3);
+        }
+
+        .sidebar-brand-text {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+        }
+
+        .sidebar-brand-badge {
+            font-size: 0.65rem;
+            font-weight: 600;
+            background: rgba(0, 166, 81, 0.15);
+            color: var(--accent-blue);
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 166, 81, 0.25);
+        }
+
+        .sidebar-section-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 0 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            padding: 0 0.75rem;
+            flex: 1;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.7rem 0.85rem;
+            border-radius: 10px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition-fast);
+            border: 1px solid transparent;
+        }
+
+        .sidebar-link:hover {
+            background: rgba(0, 166, 81, 0.04);
+            color: #00a651;
+        }
+
+        .sidebar-link.active {
+            background: rgba(0, 166, 81, 0.08);
+            color: #00a651;
+            border-left: 3px solid #00a651;
+            border-radius: 0 10px 10px 0;
+            margin-left: -0.75rem;
+            padding-left: 1.6rem;
+            border-color: transparent;
+        }
+
+        .sidebar-link.active i {
+            color: #00a651;
+        }
+
+        .sidebar-link i {
+            width: 20px;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .sidebar-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-light);
+            margin-top: auto;
+        }
+
+        .sidebar-footer-link {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: var(--transition-fast);
+            padding: 0.5rem 0;
+        }
+
+        .sidebar-footer-link:hover {
+            color: #00a651;
+        }
+
+        /* Main Content */
+        .admin-main {
+            margin-left: 260px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .admin-topbar {
+            background: var(--bg-dark-surface);
+            border-bottom: 1px solid var(--border-light);
+            padding: 0.85rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            backdrop-filter: var(--glass-blur);
+        }
+
+        .topbar-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .admin-content {
+            padding: 2rem;
+            flex: 1;
+            animation: contentFadeIn 0.4s ease;
+        }
+
+        .admin-footer {
+            background: var(--bg-dark-surface);
+            border-top: 1px solid var(--border-light);
+            padding: 1rem 2rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        /* Toast notification */
+        .toast-success {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            border-radius: 12px;
+            padding: 0.85rem 1.25rem;
+            color: var(--accent-emerald);
+            font-size: 0.88rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            z-index: 9999;
+            animation: slideInRight 0.35s ease, fadeOut 0.5s 3s forwards;
+            backdrop-filter: var(--glass-blur);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        @@keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @@keyframes fadeOut {
+            to { opacity: 0; transform: translateY(-10px); }
+        }
+
+        /* Light theme overrides for Admin Panel */
+        body.theme-light {
+            --bg-dark-base: #f5f7f5;
+            --bg-dark-surface: #ffffff;
+            --bg-dark-card: #ffffff;
+            --bg-dark-card-hover: #ffffff;
+            --border-light: #e0e7e0;
+            --text-primary: #1a1a1a;
+            --text-secondary: #4a554a;
+            --text-muted: #8a998a;
+        }
+        body.theme-light .admin-sidebar {
+            background: #ffffff;
+            border-right: 1px solid #e0e7e0;
+        }
+        body.theme-light .sidebar-brand {
+            border-bottom: 1px solid #e0e7e0;
+        }
+        body.theme-light .sidebar-brand-text {
+            color: #1a1a1a;
+        }
+        body.theme-light .sidebar-link {
+            color: #4a554a;
+        }
+        body.theme-light .sidebar-link:hover {
+            background: rgba(0, 166, 81, 0.04);
+            color: #00a651;
+        }
+        body.theme-light .admin-topbar {
+            background: #ffffff;
+            border-bottom: 1px solid #e0e7e0;
+        }
+        body.theme-light .sidebar-footer {
+            border-top: 1px solid #e0e7e0;
+        }
+        body.theme-light .sidebar-footer-link {
+            color: #4a554a;
+        }
+        body.theme-light .sidebar-footer-link:hover {
+            color: #00a651;
+        }
+        body.theme-light .admin-footer {
+            background: #ffffff;
+            border-top: 1px solid #e0e7e0;
+            color: #8a998a;
+        }
+    </style>
+</head>
+<body class="theme-light">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="toast-success">
+            <i class="fa-solid fa-circle-check"></i>
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <a href="/" class="sidebar-brand">
+                <div class="sidebar-brand-icon">
+                    <svg viewBox="0 0 24 24" style="width: 24px; height: 24px;" xmlns="http://www.w3.org/2000/svg">
+                      <!-- Racket Group -->
+                      <g transform="rotate(45 15 9)" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <ellipse cx="15" cy="9" rx="4" ry="5" />
+                        <!-- Strings -->
+                        <line x1="12" y1="9" x2="18" y2="9" stroke-width="0.8" opacity="0.6" />
+                        <line x1="15" y1="4" x2="15" y2="14" stroke-width="0.8" opacity="0.6" />
+                        <line x1="13.5" y1="5.5" x2="16.5" y2="12.5" stroke-width="0.8" opacity="0.6" />
+                        <line x1="16.5" y1="5.5" x2="13.5" y2="12.5" stroke-width="0.8" opacity="0.6" />
+                      </g>
+                      <!-- Shaft and Handle -->
+                      <line x1="11.5" y1="12.5" x2="6.5" y2="17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                      <line x1="6.5" y1="17.5" x2="4.5" y2="19.5" stroke="currentColor" stroke-width="2.8" stroke-linecap="square" />
+                      <!-- Shuttlecock -->
+                      <g transform="translate(1, -1)" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <!-- Cork base -->
+                        <path d="M6 10.5 C 6 11.5, 8 11.5, 8 10.5 Z" fill="currentColor" stroke="none" />
+                        <!-- Feathers -->
+                        <path d="M6 10 L 4.5 6 H 9.5 L 8 10 Z" stroke-width="1.2" />
+                        <line x1="5.5" y1="6" x2="6.5" y2="10" stroke-width="0.8" />
+                        <line x1="8.5" y1="6" x2="7.5" y2="10" stroke-width="0.8" />
+                      </g>
+                    </svg>
+                </div>
+                <div>
+                    <div class="sidebar-brand-text">KHA Sport</div>
+                    <span class="sidebar-brand-badge">ADMIN</span>
+                </div>
+            </a>
+
+            <div class="sidebar-section-label">Tổng Quan</div>
+            <nav class="sidebar-nav">
+                <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index"
+                   class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")">
+                    <i class="fa-solid fa-gauge-high"></i>
+                    Dashboard
+                </a>
+
+                <div class="sidebar-section-label" style="padding: 0; margin-top: 1rem;">Quản Lý</div>
+
+                <a asp-area="Admin" asp-controller="ProductManagement" asp-action="Index"
+                   class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ProductManagement" ? "active" : "")">
+                    <i class="fa-solid fa-box-open"></i>
+                    Sản Phẩm
+                </a>
+
+                <a asp-area="Admin" asp-controller="User" asp-action="Index"
+                   class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "User" ? "active" : "")">
+                    <i class="fa-solid fa-users-gear"></i>
+                    Tài Khoản
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a asp-area="" asp-controller="Products" asp-action="Index" class="sidebar-footer-link">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Quay lại Cửa hàng
+                </a>
+                <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" style="margin: 0;">
+                    <button type="submit" class="sidebar-footer-link" style="background: none; border: none; cursor: pointer; width: 100%; text-align: left; padding: 0.5rem 0; color: var(--text-secondary); font-size: 0.85rem; font-weight: 500;">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        Đăng Xuất
+                    </button>
+                </form>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="admin-main">
+            <header class="admin-topbar">
+                <div class="topbar-title">
+                    <i class="fa-solid fa-shield-halved" style="color: var(--accent-blue);"></i>
+                    Admin Panel
+                </div>
+                <div class="topbar-actions">
+                    <button id="themeToggleBtn" class="btn-theme-toggle" title="Chuyển chế độ sáng/tối">
+                        <i class="fa-regular fa-moon theme-icon-dark"></i>
+                        <i class="fa-regular fa-sun theme-icon-light" style="display: none;"></i>
+                    </button>
+                    <a href="@Url.Action("Profile", "Account", new { area = "" })" class="user-avatar-wrapper" style="width: 32px; height: 32px; position: relative; text-decoration: none;" title="Trang cá nhân">
+                        <div class="avatar-glow"></div>
+                        @if (User.HasClaim(c => c.Type == "AvatarPath"))
+                        {
+                            <img src="~/product/images/@User.FindFirst("AvatarPath")?.Value" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-light);" />
+                        }
+                        else
+                        {
+                            <span class="user-avatar-initials" style="font-size: 0.75rem;">@User.Identity?.Name?.Substring(0, 2).ToUpper()</span>
+                        }
+                    </a>
+                </div>
+            </header>
+
+            <main class="admin-content">
+                @RenderBody()
+            </main>
+
+            <footer class="admin-footer">
+                &copy; 2026 - KHA Sport Admin Panel - Hệ Thống Quản Trị
+            </footer>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

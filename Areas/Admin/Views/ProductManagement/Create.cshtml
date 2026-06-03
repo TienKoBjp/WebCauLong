@@ -1,0 +1,266 @@
+@model AspNetMvcApp.Models.Product
+@{
+    ViewData["Title"] = "Thêm Sản Phẩm";
+}
+
+<style>
+    .form-page-header {
+        margin-bottom: 2rem;
+    }
+
+    .form-page-header h1 {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.25rem;
+    }
+
+    .form-page-header p {
+        color: var(--text-secondary);
+        font-size: 0.88rem;
+    }
+
+    .form-card {
+        background: var(--bg-dark-card);
+        border: 1px solid var(--border-light);
+        border-radius: 20px;
+        padding: 2rem;
+        max-width: 700px;
+        backdrop-filter: var(--glass-blur);
+    }
+
+    .form-group {
+        margin-bottom: 1.35rem;
+    }
+
+    .form-label {
+        display: block;
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-bottom: 0.4rem;
+    }
+
+    .form-control-custom {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border-light);
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        color: var(--text-primary);
+        font-size: 0.9rem;
+        outline: none;
+        transition: var(--transition-normal);
+    }
+
+    .form-control-custom:focus {
+        border-color: rgba(0, 166, 81, 0.5);
+        background: rgba(255, 255, 255, 0.06);
+        box-shadow: 0 0 15px rgba(0, 166, 81, 0.12);
+    }
+
+    .form-control-custom option {
+        background: #ffffff;
+        color: var(--text-primary);
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .form-check-custom {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+    }
+
+    .form-check-custom input {
+        accent-color: var(--accent-blue);
+        width: 16px;
+        height: 16px;
+    }
+
+    .form-check-custom label {
+        color: var(--text-secondary);
+        font-size: 0.88rem;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1.75rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid var(--border-light);
+    }
+
+    .btn-submit {
+        background: var(--grad-primary);
+        border: none;
+        color: #fff;
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        font-family: 'Outfit', sans-serif;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: var(--transition-fast);
+        box-shadow: 0 4px 15px rgba(0, 166, 81, 0.3);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 166, 81, 0.4);
+    }
+
+    .btn-cancel {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--border-light);
+        color: var(--text-primary);
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        font-family: 'Outfit', sans-serif;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: var(--transition-fast);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-cancel:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--text-primary);
+    }
+
+    .validation-error {
+        color: #ef4444;
+        font-size: 0.78rem;
+        margin-top: 0.3rem;
+    }
+</style>
+
+<div class="form-page-header">
+    <h1><i class="fa-solid fa-plus" style="color: var(--accent-blue);"></i> Thêm Sản Phẩm Mới</h1>
+    <p>Điền thông tin bên dưới để thêm sản phẩm vào cửa hàng.</p>
+</div>
+
+<div class="form-card">
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label asp-for="Name" class="form-label">Tên Sản Phẩm</label>
+            <input asp-for="Name" class="form-control-custom" placeholder="VD: Yonex Astrox 100 ZZ" />
+            <span asp-validation-for="Name" class="validation-error"></span>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label asp-for="CategoryId" class="form-label">Danh Mục</label>
+                <select asp-for="CategoryId" asp-items="@ViewBag.Categories" class="form-control-custom">
+                    <option value="">-- Chọn danh mục --</option>
+                </select>
+                <span asp-validation-for="CategoryId" class="validation-error"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Price" class="form-label">Giá (VNĐ)</label>
+                <input asp-for="Price" class="form-control-custom" placeholder="VD: 3500000" type="number" step="1000" />
+                <span asp-validation-for="Price" class="validation-error"></span>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label asp-for="Rating" class="form-label">Đánh Giá (0 - 5)</label>
+                <input asp-for="Rating" class="form-control-custom" placeholder="VD: 4.5" type="number" step="0.1" min="0" max="5" />
+                <span asp-validation-for="Rating" class="validation-error"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StockStatus" class="form-label">Trạng Thái Kho</label>
+                <select asp-for="StockStatus" class="form-control-custom">
+                    <option value="InStock">Còn hàng</option>
+                    <option value="LowStock">Sắp hết hàng</option>
+                    <option value="OutOfStock">Hết hàng</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Tải Ảnh Chính Lên Từ Máy Tính</label>
+            <div class="custom-file-upload">
+                <input type="file" name="imageFile" id="imageFileInput" class="file-input-hidden" accept="image/*" />
+                <label for="imageFileInput" class="file-upload-label">
+                    <i class="fa-solid fa-image"></i>
+                    <span class="file-upload-text">Chọn ảnh chính sản phẩm...</span>
+                </label>
+                <div class="file-upload-preview" id="imageFilePreview">Chưa chọn ảnh chính nào</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Tải Thêm Nhiều Ảnh Chi Tiết Sản Phẩm (Tùy chọn)</label>
+            <div class="custom-file-upload">
+                <input type="file" name="detailImages" id="detailImagesInput" class="file-input-hidden" accept="image/*" multiple />
+                <label for="detailImagesInput" class="file-upload-label">
+                    <i class="fa-solid fa-images"></i>
+                    <span class="file-upload-text">Chọn nhiều ảnh chi tiết...</span>
+                </label>
+                <div class="file-upload-preview" id="detailImagesPreview">Chưa chọn ảnh chi tiết nào</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="ImagePath" class="form-label">Tên File Ảnh (trong /product/images/)</label>
+            <input asp-for="ImagePath" id="imagePathInput" class="form-control-custom" placeholder="VD: victor_ryuga.png" />
+            <span asp-validation-for="ImagePath" class="validation-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Description" class="form-label">Mô Tả</label>
+            <textarea asp-for="Description" class="form-control-custom" rows="4" placeholder="Nhập mô tả chi tiết sản phẩm..."></textarea>
+            <span asp-validation-for="Description" class="validation-error"></span>
+        </div>
+
+        <div class="form-check-custom">
+            <input asp-for="IsFeatured" type="checkbox" />
+            <label asp-for="IsFeatured">Sản phẩm nổi bật</label>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">
+                <i class="fa-solid fa-plus"></i> Thêm Sản Phẩm
+            </button>
+            <a asp-action="Index" class="btn-cancel">
+                <i class="fa-solid fa-xmark"></i> Hủy
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.getElementById('imageFileInput').addEventListener('change', function (e) {
+        if (e.target.files && e.target.files[0]) {
+            var fileName = e.target.files[0].name;
+            document.getElementById('imagePathInput').value = fileName;
+            document.getElementById('imageFilePreview').textContent = "Đã chọn: " + fileName;
+        } else {
+            document.getElementById('imageFilePreview').textContent = "Chưa chọn ảnh chính nào";
+        }
+    });
+
+    document.getElementById('detailImagesInput').addEventListener('change', function (e) {
+        if (e.target.files && e.target.files.length > 0) {
+            var count = e.target.files.length;
+            var fileNames = Array.from(e.target.files).map(f => f.name).join(", ");
+            document.getElementById('detailImagesPreview').textContent = "Đã chọn (" + count + "): " + fileNames;
+        } else {
+            document.getElementById('detailImagesPreview').textContent = "Chưa chọn ảnh chi tiết nào";
+        }
+    });
+</script>

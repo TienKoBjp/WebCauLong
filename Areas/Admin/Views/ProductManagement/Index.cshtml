@@ -1,0 +1,373 @@
+@model List<AspNetMvcApp.Models.Product>
+@{
+    ViewData["Title"] = "Quản Lý Sản Phẩm";
+}
+
+<style>
+    .pm-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.75rem;
+    }
+
+    .pm-header h1 {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    .pm-header p {
+        color: var(--text-secondary);
+        font-size: 0.88rem;
+        margin: 0.2rem 0 0;
+    }
+
+    .pm-btn-add {
+        background: var(--grad-primary);
+        border: none;
+        color: #fff;
+        padding: 0.7rem 1.25rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        font-family: 'Outfit', sans-serif;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: var(--transition-fast);
+        box-shadow: 0 4px 15px rgba(0, 166, 81, 0.3);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .pm-btn-add:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 166, 81, 0.4);
+        color: #fff;
+    }
+
+    .pm-table-card {
+        background: var(--bg-dark-card);
+        border: 1px solid var(--border-light);
+        border-radius: 16px;
+        overflow: hidden;
+        backdrop-filter: var(--glass-blur);
+    }
+
+    .pm-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .pm-table th {
+        padding: 1rem 1.25rem;
+        color: var(--text-muted);
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-bottom: 1px solid var(--border-light);
+        text-align: left;
+    }
+
+    body.theme-light .pm-table th {
+        background: #f0f7f0;
+        color: #4a554a;
+    }
+
+    .pm-table td {
+        padding: 0.9rem 1.25rem;
+        border-bottom: 1px solid var(--border-light);
+        font-size: 0.9rem;
+        color: var(--text-primary);
+        vertical-align: middle;
+    }
+
+    .pm-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .pm-table tr:hover td {
+        background: rgba(0, 166, 81, 0.03);
+    }
+
+    .pm-product-cell {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+    }
+
+    .pm-product-thumb {
+        width: 48px;
+        height: 48px;
+        border-radius: 10px;
+        object-fit: contain;
+        background: #f5f7f5;
+        padding: 4px;
+        border: 1px solid var(--border-light);
+    }
+
+    .pm-product-name {
+        font-weight: 600;
+        font-family: 'Outfit', sans-serif;
+    }
+
+    .pm-badge {
+        padding: 0.25rem 0.6rem;
+        border-radius: 6px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .pm-badge-instock {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--accent-emerald);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .pm-badge-lowstock {
+        background: rgba(255, 107, 0, 0.1);
+        color: var(--accent-purple);
+        border: 1px solid rgba(255, 107, 0, 0.2);
+    }
+
+    .pm-badge-outofstock {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .pm-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .pm-btn-edit {
+        background: rgba(0, 166, 81, 0.08);
+        border: 1px solid rgba(0, 166, 81, 0.2);
+        color: var(--accent-blue);
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: var(--transition-fast);
+        text-decoration: none;
+        font-size: 0.85rem;
+    }
+
+    .pm-btn-edit:hover {
+        background: rgba(0, 166, 81, 0.16);
+        color: var(--accent-blue);
+    }
+
+    .pm-btn-delete {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: var(--transition-fast);
+        font-size: 0.85rem;
+    }
+
+    .pm-btn-delete:hover {
+        background: rgba(239, 68, 68, 0.2);
+    }
+
+    .pm-empty {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: var(--text-secondary);
+    }
+
+    .pm-empty i {
+        font-size: 3rem;
+        color: var(--text-muted);
+        margin-bottom: 1rem;
+    }
+
+    /* Pagination Styles */
+    .pm-pagination-btn {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--border-light);
+        color: var(--text-primary);
+        padding: 0.45rem 0.9rem;
+        font-size: 0.82rem;
+        font-weight: 600;
+        font-family: 'Outfit', sans-serif;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: var(--transition-fast);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .pm-pagination-btn:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--text-primary);
+        text-decoration: none;
+    }
+
+    body.theme-light .pm-pagination-btn {
+        background: #ffffff;
+        border-color: #e0e7e0;
+        color: #1a1a1a;
+    }
+
+    body.theme-light .pm-pagination-btn:hover {
+        background: #f0f7f0;
+        color: #00a651;
+        border-color: #00a651;
+    }
+</style>
+
+<div class="pm-header">
+    <div>
+        <h1>Quản Lý Sản Phẩm</h1>
+        <p>Tổng cộng @Model.Count sản phẩm trong hệ thống</p>
+    </div>
+    <a asp-action="Create" class="pm-btn-add">
+        <i class="fa-solid fa-plus"></i> Thêm Sản Phẩm
+    </a>
+</div>
+
+<div class="pm-table-card">
+    @if (Model.Count == 0)
+    {
+        <div class="pm-empty">
+            <i class="fa-solid fa-box-open d-block"></i>
+            <h3>Chưa có sản phẩm nào</h3>
+            <p>Hãy thêm sản phẩm đầu tiên cho cửa hàng.</p>
+        </div>
+    }
+    else
+    {
+        <table class="pm-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Sản Phẩm</th>
+                    <th>Danh Mục</th>
+                    <th>Giá</th>
+                    <th>Đánh Giá</th>
+                    <th>Trạng Thái</th>
+                    <th>Thao Tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var product in Model)
+                {
+                    <tr>
+                        <td style="color: var(--text-muted); font-weight: 600;">#@product.Id</td>
+                        <td>
+                            <div class="pm-product-cell">
+                                <img src="~/product/images/@product.ImagePath" alt="@product.Name" class="pm-product-thumb" />
+                                <span class="pm-product-name">@product.Name</span>
+                            </div>
+                        </td>
+                        <td>@(product.Category?.Name ?? "—")</td>
+                        <td style="font-weight: 600;">@(product.Price.ToString("#,##0")) đ</td>
+                        <td>
+                            <i class="fa-solid fa-star" style="color: #ffd700; font-size: 0.8rem;"></i>
+                            @product.Rating.ToString("0.0")
+                        </td>
+                        <td>
+                            @if (product.StockStatus == "InStock")
+                            {
+                                <span class="pm-badge pm-badge-instock">Còn hàng</span>
+                            }
+                            else if (product.StockStatus == "LowStock")
+                            {
+                                <span class="pm-badge pm-badge-lowstock">Sắp hết</span>
+                            }
+                            else
+                            {
+                                <span class="pm-badge pm-badge-outofstock">Hết hàng</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="pm-actions">
+                                <a asp-action="Edit" asp-route-id="@product.Id" class="pm-btn-edit" title="Sửa">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+                                <form asp-action="Delete" asp-route-id="@product.Id" method="post" style="margin:0;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">
+                                    <button type="submit" class="pm-btn-delete" title="Xóa">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- Phân trang (Pagination) -->
+        @if (ViewBag.TotalPages > 1)
+        {
+            <div class="pm-pagination" style="display: flex; justify-content: space-between; align-items: center; padding: 1.25rem; border-top: 1px solid var(--border-light); background: rgba(255,255,255,0.01);">
+                <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                    Hiển thị <strong>@(((ViewBag.CurrentPage - 1) * ViewBag.PageSize) + 1) - @Math.Min(ViewBag.CurrentPage * ViewBag.PageSize, ViewBag.TotalItems)</strong> trên tổng số <strong>@ViewBag.TotalItems</strong> sản phẩm
+                </div>
+                <div style="display: flex; gap: 0.35rem; align-items: center;">
+                    @if (ViewBag.CurrentPage > 1)
+                    {
+                        <a asp-action="Index" asp-route-page="@(ViewBag.CurrentPage - 1)" class="pm-pagination-btn">
+                            <i class="fa-solid fa-chevron-left"></i> Trước
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="pm-pagination-btn" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;">
+                            <i class="fa-solid fa-chevron-left"></i> Trước
+                        </span>
+                    }
+
+                    @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                    {
+                        if (i == ViewBag.CurrentPage)
+                        {
+                            <span style="background: var(--grad-primary); border: none; color: #fff; padding: 0.45rem 0.9rem; font-size: 0.82rem; font-weight: 700; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; min-width: 35px; box-shadow: 0 2px 8px rgba(0, 166, 81, 0.25);">
+                                @i
+                            </span>
+                        }
+                        else
+                        {
+                            <a asp-action="Index" asp-route-page="@i" class="pm-pagination-btn" style="min-width: 35px; justify-content: center;">
+                                @i
+                            </a>
+                        }
+                    }
+
+                    @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                    {
+                        <a asp-action="Index" asp-route-page="@(ViewBag.CurrentPage + 1)" class="pm-pagination-btn">
+                            Sau <i class="fa-solid fa-chevron-right"></i>
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="pm-pagination-btn" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;">
+                            Sau <i class="fa-solid fa-chevron-right"></i>
+                        </span>
+                    }
+                </div>
+            </div>
+        }
+    }
+</div>

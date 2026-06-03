@@ -1,0 +1,266 @@
+@model Microsoft.AspNetCore.Identity.IdentityUser
+@{
+    ViewData["Title"] = "Trang Cá Nhân";
+}
+
+<style>
+    .profile-card {
+        background: var(--bg-dark-card);
+        border: 1px solid var(--border-light);
+        border-radius: 24px;
+        padding: 3rem;
+        max-width: 600px;
+        margin: 2rem auto;
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        box-shadow: var(--shadow-soft);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .profile-glow {
+        position: absolute;
+        width: 250px;
+        height: 250px;
+        top: -125px;
+        right: -125px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(0, 166, 81, 0.12) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    .profile-avatar-wrapper {
+        position: relative;
+        width: 130px;
+        height: 130px;
+        margin: 0 auto 1.5rem auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .profile-avatar-glow {
+        position: absolute;
+        inset: -4px;
+        border-radius: 50%;
+        background: var(--grad-primary);
+        opacity: 0.5;
+        animation: logoPulse 4s infinite alternate;
+        z-index: 1;
+    }
+
+    .profile-avatar-img {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        background: #1e293b;
+        border: 2px solid var(--border-light);
+    }
+
+    body.theme-light .profile-avatar-img {
+        background: #e2e8f0;
+    }
+
+    .profile-initials {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        height: 100%;
+        background-color: #1e293b;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        border: 2px solid var(--border-light);
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body.theme-light .profile-initials {
+        background-color: #e2e8f0;
+    }
+
+    .profile-info {
+        margin-bottom: 2rem;
+    }
+
+    .profile-email {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        margin-bottom: 0.25rem;
+    }
+
+    .profile-role {
+        font-size: 0.82rem;
+        font-weight: 600;
+        background: rgba(0, 166, 81, 0.12);
+        color: var(--accent-blue);
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        border: 1px solid rgba(0, 166, 81, 0.25);
+        display: inline-block;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .profile-userid {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin-top: 0.5rem;
+    }
+
+    .upload-form-group {
+        border-top: 1px solid var(--border-light);
+        padding-top: 1.5rem;
+        margin-top: 1.5rem;
+        text-align: left;
+    }
+
+    .upload-label {
+        display: block;
+        color: var(--text-secondary);
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        text-align: center;
+    }
+
+    .upload-input-wrapper {
+        position: relative;
+        margin-bottom: 1rem;
+    }
+
+    .btn-profile-submit {
+        background: var(--grad-primary);
+        border: none;
+        color: #ffffff;
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        border-radius: 12px;
+        width: 100%;
+        cursor: pointer;
+        transition: var(--transition-fast);
+        box-shadow: 0 4px 15px rgba(0, 166, 81, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .btn-profile-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 166, 81, 0.4);
+    }
+
+    .toast-msg {
+        border-radius: 12px;
+        padding: 0.85rem 1.25rem;
+        font-size: 0.88rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .toast-msg-success {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        color: var(--accent-emerald);
+    }
+
+    .toast-msg-error {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+    }
+</style>
+
+<div class="profile-card">
+    <div class="profile-glow"></div>
+
+    <h2 class="mb-4" style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: var(--text-primary);">Thông Tin Tài Khoản</h2>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="toast-msg toast-msg-success">
+            <i class="fa-solid fa-circle-check"></i>
+            @TempData["SuccessMessage"]
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="toast-msg toast-msg-error">
+            <i class="fa-solid fa-circle-xmark"></i>
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <div class="profile-avatar-wrapper">
+        <div class="profile-avatar-glow"></div>
+        @if (User.HasClaim(c => c.Type == "AvatarPath"))
+        {
+            <img src="~/product/images/@User.FindFirst("AvatarPath")?.Value" class="profile-avatar-img" alt="Avatar" />
+        }
+        else
+        {
+            <div class="profile-initials">@Model.Email?.Substring(0, 2).ToUpper()</div>
+        }
+    </div>
+
+    <div class="profile-info">
+        <div class="profile-email">@Model.Email</div>
+        <div class="profile-role">
+            <i class="fa-solid fa-user-shield me-1"></i> @(User.IsInRole("Admin") ? "Quản Trị Viên" : "Khách Hàng")
+        </div>
+        <div class="profile-userid">ID: #@Model.Id</div>
+    </div>
+
+    <form asp-action="Profile" method="post" enctype="multipart/form-data">
+        <div class="upload-form-group">
+            <label class="upload-label">Thay Đổi Ảnh Đại Diện</label>
+            <div class="custom-file-upload mb-3">
+                <input type="file" name="avatarFile" id="avatarFileInput" class="file-input-hidden" accept="image/*" required />
+                <label for="avatarFileInput" class="file-upload-label">
+                    <i class="fa-solid fa-image"></i>
+                    <span class="file-upload-text">Chọn ảnh đại diện từ máy...</span>
+                </label>
+                <div class="file-upload-preview" id="avatarPreview">Chưa chọn hình ảnh nào</div>
+            </div>
+            <button type="submit" class="btn-profile-submit">
+                <i class="fa-solid fa-cloud-arrow-up"></i> Cập Nhật Ảnh Đại Diện
+            </button>
+        </div>
+    </form>
+
+    <div class="mt-4 pt-3" style="border-top: 1px solid var(--border-light); display: flex; gap: 0.75rem; justify-content: center;">
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="btn-secondary-custom d-inline-flex align-items-center gap-2" style="border-radius: 10px; font-size: 0.85rem; padding: 0.5rem 1rem; text-decoration: none;">
+                <i class="fa-solid fa-gauge-high"></i> Vào Trang Quản Trị
+            </a>
+        }
+        <a asp-controller="Products" asp-action="Index" class="btn-secondary-custom d-inline-flex align-items-center gap-2" style="border-radius: 10px; font-size: 0.85rem; padding: 0.5rem 1rem; text-decoration: none;">
+            <i class="fa-solid fa-basket-shopping"></i> Quay Lại Mua Sắm
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('avatarFileInput').addEventListener('change', function (e) {
+            var fileName = e.target.files.length > 0 ? e.target.files[0].name : "Chưa chọn hình ảnh nào";
+            document.getElementById('avatarPreview').textContent = "Đã chọn: " + fileName;
+        });
+    </script>
+}

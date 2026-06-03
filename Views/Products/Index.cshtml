@@ -1,0 +1,801 @@
+@model AspNetMvcApp.Models.ProductListViewModel
+@{
+    ViewData["Title"] = "Cửa Hàng Cầu Lông KHA Sport";
+}
+
+<!-- Custom Styles for Premium Products Showcase -->
+<style>
+    /* Sport Hero Banner Styling */
+    .sport-hero-banner {
+        position: relative;
+        background: linear-gradient(135deg, rgba(0, 166, 81, 0.15) 0%, rgba(255, 107, 0, 0.1) 100%), var(--bg-dark-card);
+        border: 1px solid var(--border-light);
+        border-radius: 24px;
+        padding: 4rem 3rem;
+        overflow: hidden;
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        box-shadow: var(--shadow-soft);
+        margin-bottom: 2.5rem;
+    }
+
+    .sport-hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 80% 20%, rgba(0, 166, 81, 0.15) 0%, transparent 50%),
+                    radial-gradient(circle at 20% 80%, rgba(255, 107, 0, 0.1) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    .sport-hero-bg-glow {
+        position: absolute;
+        top: -100px;
+        right: -100px;
+        width: 300px;
+        height: 300px;
+        background: var(--grad-primary);
+        filter: blur(80px);
+        opacity: 0.15;
+        pointer-events: none;
+    }
+
+    .sport-hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 800px;
+    }
+
+    .badge-new-arrival {
+        background: rgba(255, 107, 0, 0.15);
+        color: #ff9100;
+        border: 1px solid rgba(255, 107, 0, 0.3);
+        padding: 0.4rem 1rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .hero-title {
+        font-size: 3rem;
+        font-weight: 800;
+        line-height: 1.15;
+        color: var(--text-primary);
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        margin-bottom: 1rem;
+        letter-spacing: -0.03em;
+        background: linear-gradient(135deg, var(--text-primary) 30%, #00c853 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+    }
+
+    .hero-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-hero-primary {
+        background: var(--grad-primary);
+        border: none;
+        color: #ffffff !important;
+        padding: 0.85rem 2rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 4px 15px rgba(0, 166, 81, 0.35);
+        transition: var(--transition-normal);
+        text-decoration: none !important;
+        cursor: pointer;
+    }
+
+    .btn-hero-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 166, 81, 0.5);
+    }
+
+    .btn-hero-secondary {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--border-light);
+        color: var(--text-primary) !important;
+        padding: 0.85rem 2rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: var(--transition-normal);
+        text-decoration: none !important;
+        cursor: pointer;
+    }
+
+    .btn-hero-secondary:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.15);
+        transform: translateY(-2px);
+    }
+
+    /* Filter Bar Styling */
+    .filter-section {
+        background: var(--bg-dark-card);
+        border: 1px solid var(--border-light);
+        border-radius: 20px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        box-shadow: var(--shadow-soft);
+    }
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 1.25rem;
+        align-items: center;
+    }
+
+    @@media (max-width: 768px) {
+        .filter-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .filter-input-group {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .filter-search-icon {
+        position: absolute;
+        left: 1.1rem;
+        color: var(--text-muted);
+        font-size: 0.95rem;
+    }
+
+    .filter-search-input {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        padding: 0.75rem 1rem 0.75rem 2.6rem;
+        color: var(--text-primary);
+        font-size: 0.9rem;
+        width: 100%;
+        outline: none;
+        transition: var(--transition-normal);
+    }
+
+    .filter-search-input:focus {
+        background: rgba(255, 255, 255, 0.06);
+        border-color: rgba(0, 166, 81, 0.5);
+        box-shadow: 0 0 15px rgba(0, 166, 81, 0.15);
+    }
+
+    .filter-select-custom {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        color: var(--text-primary);
+        font-size: 0.9rem;
+        outline: none;
+        cursor: pointer;
+        width: 100%;
+        transition: var(--transition-normal);
+        appearance: none;
+        -webkit-appearance: none;
+        background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 18px;
+    }
+
+    .filter-select-custom:focus {
+        border-color: rgba(0, 166, 81, 0.5);
+        box-shadow: 0 0 15px rgba(0, 166, 81, 0.15);
+    }
+
+    .filter-select-custom option {
+        background: #0f1424;
+        color: var(--text-primary);
+    }
+
+    .category-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.65rem;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .category-pill {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border-light);
+        color: var(--text-secondary);
+        padding: 0.45rem 1.2rem;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition-fast);
+        text-decoration: none !important;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .category-pill:hover {
+        background: rgba(255, 255, 255, 0.07);
+        color: var(--text-primary);
+        border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .category-pill.active {
+        background: rgba(0, 166, 81, 0.15);
+        color: #ffffff;
+        border-color: rgba(0, 166, 81, 0.4);
+        box-shadow: 0 0 15px rgba(0, 166, 81, 0.2);
+    }
+
+    /* Product Grid & Cards Styling */
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(265px, 1fr));
+        gap: 1.25rem;
+        margin-bottom: 3rem;
+    }
+
+    @@media (max-width: 480px) {
+        .product-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .product-card {
+        background: var(--bg-dark-card);
+        border: 1px solid var(--border-light);
+        border-radius: 28px;
+        overflow: hidden;
+        transition: var(--transition-normal);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        position: relative;
+        padding: 0.85rem;
+    }
+
+    .product-card:hover {
+        background: var(--bg-dark-card-hover);
+        transform: translateY(-8px);
+        border-color: rgba(0, 166, 81, 0.35);
+        box-shadow: 0 20px 35px -10px rgba(0, 166, 81, 0.15);
+    }
+
+    .product-image-container {
+        position: relative;
+        height: 250px;
+        background: rgba(0, 0, 0, 0.04);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        padding: 0.5rem;
+        transition: var(--transition-normal);
+    }
+
+    body.theme-dark .product-image-container {
+        background: rgba(255, 255, 255, 0.02);
+    }
+
+    .product-image {
+        max-width: 96%;
+        max-height: 96%;
+        object-fit: contain;
+        transition: var(--transition-normal);
+        filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15));
+    }
+
+    .product-card:hover .product-image {
+        transform: scale(1.08);
+        filter: drop-shadow(0 15px 30px rgba(0, 166, 81, 0.3));
+    }
+
+    /* Floating Badges */
+    .badge-container-top {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        right: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 5;
+    }
+
+    .product-badge-cat {
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 0.35rem 0.75rem;
+        border-radius: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        transition: var(--transition-fast);
+        display: inline-block;
+    }
+    
+    /* Chế độ SÁNG (theme-light): Chữ màu sáng trong khung đen */
+    body.theme-light .product-badge-cat {
+        background: #111827 !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Chế độ TỐI (theme-dark): Chữ màu sáng trong khung đen */
+    body.theme-dark .product-badge-cat {
+        background: rgba(13, 16, 28, 0.85) !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .product-badge-stock {
+        font-size: 0.72rem;
+        font-weight: 600;
+        padding: 0.3rem 0.7rem;
+        border-radius: 8px;
+        backdrop-filter: var(--glass-blur);
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .tech-dot {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        margin-right: 6px;
+        position: relative;
+    }
+
+    .tech-dot::after {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        border-radius: 50%;
+        border: 1px solid currentColor;
+        animation: techPulse 2s infinite ease-in-out;
+        opacity: 0.8;
+    }
+
+    .dot-green {
+        background-color: var(--accent-emerald);
+        color: var(--accent-emerald);
+    }
+
+    .dot-orange {
+        background-color: var(--accent-orange);
+        color: var(--accent-orange);
+    }
+
+    .dot-red {
+        background-color: #ef4444;
+        color: #ef4444;
+    }
+
+    @@keyframes techPulse {
+        0% { transform: scale(1); opacity: 0.8; }
+        50% { transform: scale(2); opacity: 0; }
+        100% { transform: scale(1); opacity: 0; }
+    }
+
+    .stock-instock {
+        background: rgba(16, 185, 129, 0.08);
+        color: var(--accent-emerald);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .stock-lowstock {
+        background: rgba(249, 115, 22, 0.08);
+        color: var(--accent-orange);
+        border: 1px solid rgba(249, 115, 22, 0.2);
+    }
+
+    .stock-outofstock {
+        background: rgba(239, 68, 68, 0.08);
+        color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    /* Card Details */
+    .product-details {
+        padding: 1rem 0.5rem 0.5rem 0.5rem;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        justify-content: space-between;
+    }
+
+    .product-title-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .product-name {
+        font-size: 1.08rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        margin: 0;
+        line-height: 1.3;
+    }
+
+    .product-rating {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        background: rgba(255, 215, 0, 0.07);
+        border: 1px solid rgba(255, 215, 0, 0.15);
+        padding: 0.2rem 0.5rem;
+        border-radius: 6px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #ffd700;
+    }
+
+    .product-desc {
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        line-height: 1.5;
+        margin-bottom: 1.25rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        height: 2.55rem;
+    }
+
+    .product-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        padding-top: 1.1rem;
+        margin-top: auto;
+    }
+
+    .product-price-box {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .price-label {
+        font-size: 0.72rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .product-price {
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .product-btn-cart {
+        background: var(--text-primary);
+        border: none;
+        color: var(--bg-dark-base);
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition-fast);
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .product-btn-cart:hover {
+        background: var(--accent-blue);
+        color: #ffffff;
+        transform: scale(1.05);
+    }
+
+    /* Glassmorphic Pagination Styling */
+    .pagination-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 1rem;
+        padding: 1rem;
+        background: var(--bg-dark-card);
+        border: 1px solid var(--border-light);
+        border-radius: 50px;
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        width: fit-content;
+        margin-left: auto;
+        margin-right: auto;
+        box-shadow: var(--shadow-soft);
+    }
+
+    .page-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--border-light);
+        background: rgba(255, 255, 255, 0.02);
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition-fast);
+        text-decoration: none !important;
+    }
+
+    .page-btn:hover:not(.disabled) {
+        background: rgba(255, 255, 255, 0.07);
+        color: var(--text-primary);
+        border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .page-btn.active {
+        background: var(--grad-primary);
+        color: #ffffff;
+        border-color: transparent;
+        box-shadow: 0 0 15px rgba(0, 166, 81, 0.35);
+    }
+
+    .page-btn.disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    .page-arrow {
+        padding: 0 1rem;
+        border-radius: 50px;
+        width: auto;
+        gap: 0.4rem;
+    }
+
+    /* Empty state */
+    .empty-showroom {
+        text-align: center;
+        padding: 5rem 2rem;
+        background: var(--bg-dark-card);
+        border: 1px solid var(--border-light);
+        border-radius: 20px;
+        backdrop-filter: var(--glass-blur);
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        background: var(--grad-purple-pink);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1.5rem;
+        animation: logoPulse 4s infinite alternate;
+    }
+</style>
+
+<!-- Stunning Sport Hero Banner -->
+<div class="sport-hero-banner" id="products-showcase">
+    <div class="sport-hero-overlay"></div>
+    <div class="sport-hero-content">
+        <span class="badge-new-arrival"><i class="fa-solid fa-fire"></i> KHA SPORT 2026</span>
+        <h1 class="hero-title">Đam Mê Bất Tận - Chinh Phục Mọi Trận Đấu</h1>
+        <p class="hero-subtitle">Trải nghiệm các sản phẩm cầu lông cao cấp từ Yonex, Victor, Li-Ning với công nghệ đột phá giúp tối ưu hóa hiệu suất thi đấu của bạn.</p>
+        <div class="hero-buttons">
+            <a href="#filterForm" class="btn-hero-primary"><i class="fa-solid fa-basket-shopping"></i> Mua Ngay</a>
+            <a href="@Url.Action("Index", "Products")" class="btn-hero-secondary"><i class="fa-solid fa-arrow-rotate-left"></i> Tất Cả Sản Phẩm</a>
+        </div>
+    </div>
+    <div class="sport-hero-bg-glow"></div>
+</div>
+
+<!-- Premium Filter & Controls Panel -->
+<div class="filter-section">
+    <form method="get" action="@Url.Action("Index", "Products")" id="filterForm">
+        <!-- Keep active category and sort as hidden fields if needed, or update via URL -->
+        <input type="hidden" name="category" value="@Model.SelectedCategory" id="categoryInput" />
+        
+        <div class="filter-grid">
+            <!-- Search field -->
+            <div class="filter-input-group">
+                <i class="fa-solid fa-magnifying-glass filter-search-icon"></i>
+                <input type="text" name="searchTerm" value="@Model.SearchTerm" placeholder="Tìm kiếm sản phẩm..." class="filter-search-input" />
+            </div>
+
+            <!-- Sort By -->
+            <div>
+                <select name="sortBy" class="filter-select-custom" onchange="document.getElementById('filterForm').submit();">
+                    <option value="name_asc" selected="@(Model.SelectedSort == "name_asc" ? "selected" : null)">Tên sản phẩm (A - Z)</option>
+                    <option value="name_desc" selected="@(Model.SelectedSort == "name_desc" ? "selected" : null)">Tên sản phẩm (Z - A)</option>
+                    <option value="price_asc" selected="@(Model.SelectedSort == "price_asc" ? "selected" : null)">Giá: Thấp đến Cao</option>
+                    <option value="price_desc" selected="@(Model.SelectedSort == "price_desc" ? "selected" : null)">Giá: Cao xuống Thấp</option>
+                    <option value="rating_desc" selected="@(Model.SelectedSort == "rating_desc" ? "selected" : null)">Đánh giá cao nhất</option>
+                </select>
+            </div>
+
+            <!-- Clear/Action button -->
+            <div>
+                <a href="@Url.Action("Index", "Products")" class="btn-secondary-custom justify-content-center" style="width: 100%; border-radius: 12px; padding: 0.72rem 1rem;">
+                    <i class="fa-solid fa-arrow-rotate-left"></i> Đặt Lại Bộ Lọc
+                </a>
+            </div>
+        </div>
+    </form>
+
+    <!-- Category Filter Pills -->
+    <div class="category-pills">
+        @{
+            var categories = new[] { "All", "Vợt cầu lông", "Giày cầu lông", "Phụ kiện & Áo" };
+            var categoryLabels = new Dictionary<string, string> {
+                { "All", "Tất cả" },
+                { "Vợt cầu lông", "Vợt cầu lông" },
+                { "Giày cầu lông", "Giày cầu lông" },
+                { "Phụ kiện & Áo", "Phụ kiện & Áo" }
+            };
+        }
+
+        @foreach (var cat in categories)
+        {
+            var isActive = Model.SelectedCategory == cat;
+            <!-- Make a clean link that retains search and sort values, changing only category and resetting page to 1 -->
+            <a href="@Url.Action("Index", "Products", new { category = cat, searchTerm = Model.SearchTerm, sortBy = Model.SelectedSort, page = 1 })" 
+               class="category-pill @(isActive ? "active" : "")">
+                @if (cat == "All") { <i class="fa-solid fa-border-all"></i> }
+                else if (cat == "Vợt cầu lông") { <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px; margin-right: 6px; display: inline-block; vertical-align: -2px;"><g transform="rotate(45 15 9)"><ellipse cx="15" cy="9" rx="4" ry="5" /><line x1="12" y1="9" x2="18" y2="9" stroke-width="0.8" opacity="0.6" /><line x1="15" y1="4" x2="15" y2="14" stroke-width="0.8" opacity="0.6" /></g><line x1="11.5" y1="12.5" x2="6.5" y2="17.5" stroke-width="2" /><line x1="6.5" y1="17.5" x2="4.5" y2="19.5" stroke-width="3.5" stroke-linecap="square" /></svg> }
+                else if (cat == "Giày cầu lông") { <i class="fa-solid fa-running"></i> }
+                else if (cat == "Phụ kiện & Áo") { <i class="fa-solid fa-shirt"></i> }
+                
+                @categoryLabels[cat]
+            </a>
+        }
+    </div>
+</div>
+
+<!-- Product Showcase Grid -->
+@if (Model.Products.Count == 0)
+{
+    <div class="empty-showroom">
+        <i class="fa-solid fa-box-open empty-icon"></i>
+        <h3 style="font-size: 1.4rem; color: var(--text-primary); margin-bottom: 0.5rem;">Không tìm thấy sản phẩm</h3>
+        <p style="color: var(--text-secondary); max-width: 450px; margin: 0 auto 1.5rem auto; font-size: 0.9rem;">
+            Rất tiếc, không có thiết bị nào khớp với từ khóa tìm kiếm hoặc bộ lọc hiện tại của bạn. Vui lòng thử lại với các tiêu chí khác.
+        </p>
+        <a href="@Url.Action("Index", "Products")" class="btn-primary-custom d-inline-flex" style="margin: 0 auto; text-decoration: none;">
+            <i class="fa-solid fa-arrow-left"></i> Xem Toàn Bộ Sản Phẩm
+        </a>
+    </div>
+}
+else
+{
+    <div class="product-grid">
+        @foreach (var product in Model.Products)
+        {
+            <div class="product-card">
+                
+                <!-- Floating Badges -->
+                <div class="badge-container-top">
+                    <span class="product-badge-cat">@(product.Category?.Name ?? "Sản phẩm")</span>
+                    
+                    @if (product.StockStatus == "InStock")
+                    {
+                        <span class="product-badge-stock stock-instock"><span class="tech-dot dot-green"></span>Còn hàng</span>
+                    }
+                    else if (product.StockStatus == "LowStock")
+                    {
+                        <span class="product-badge-stock stock-lowstock"><span class="tech-dot dot-orange"></span>Sắp hết</span>
+                    }
+                    else
+                    {
+                        <span class="product-badge-stock stock-outofstock"><span class="tech-dot dot-red"></span>Hết hàng</span>
+                    }
+                </div>
+
+                <!-- Product Image Area -->
+                <a href="@Url.Action("Details", "Products", new { id = product.Id })" style="text-decoration: none; display: block;">
+                    <div class="product-image-container">
+                        <img src="~/product/images/@product.ImagePath" alt="@product.Name" class="product-image" asp-append-version="true" />
+                    </div>
+                </a>
+
+                <!-- Product Text Info -->
+                <div class="product-details">
+                    <div>
+                        <div class="product-title-row">
+                            <h3 class="product-name">
+                                <a href="@Url.Action("Details", "Products", new { id = product.Id })" style="color: inherit; text-decoration: none; transition: var(--transition-fast);" onmouseover="this.style.color='var(--accent-purple)'" onmouseout="this.style.color='inherit'">
+                                    @product.Name
+                                </a>
+                            </h3>
+                            <div class="product-rating">
+                                <i class="fa-solid fa-star"></i>
+                                <span>@product.Rating.ToString("0.0")</span>
+                            </div>
+                        </div>
+                        <p class="product-desc">@product.Description</p>
+                    </div>
+
+                    <!-- Footer Pricing -->
+                    <div class="product-footer">
+                        <div class="product-price-box">
+                            <span class="price-label">Giá sở hữu</span>
+                            <span class="product-price">@(product.Price.ToString("#,##0")) đ</span>
+                        </div>
+                        <button class="product-btn-cart btn-add-to-cart" data-product-id="@product.Id" title="Thêm vào giỏ hàng">
+                            <i class="fa-solid fa-cart-shopping"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Stunning Glassmorphic Pagination Controls -->
+    if (Model.TotalPages > 1)
+    {
+        <div class="pagination-container d-flex justify-content-center">
+            <div class="pagination-wrapper">
+                
+                <!-- Previous Button -->
+                <a href="@Url.Action("Index", "Products", new { page = Model.CurrentPage - 1, searchTerm = Model.SearchTerm, category = Model.SelectedCategory, sortBy = Model.SelectedSort })" 
+                   class="page-btn page-arrow @(Model.CurrentPage == 1 ? "disabled" : "")" 
+                   title="Trang Trước">
+                    <i class="fa-solid fa-chevron-left"></i> Trước
+                </a>
+
+                <!-- Page Number Buttons -->
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <a href="@Url.Action("Index", "Products", new { page = i, searchTerm = Model.SearchTerm, category = Model.SelectedCategory, sortBy = Model.SelectedSort })" 
+                       class="page-btn @(Model.CurrentPage == i ? "active" : "")">
+                        @i
+                    </a>
+                }
+
+                <!-- Next Button -->
+                <a href="@Url.Action("Index", "Products", new { page = Model.CurrentPage + 1, searchTerm = Model.SearchTerm, category = Model.SelectedCategory, sortBy = Model.SelectedSort })" 
+                   class="page-btn page-arrow @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")" 
+                   title="Trang Sau">
+                    Sau <i class="fa-solid fa-chevron-right"></i>
+                </a>
+
+            </div>
+        </div>
+        
+        <!-- Pagination stats summary removed -->
+    }
+}
