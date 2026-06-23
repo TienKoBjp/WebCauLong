@@ -1,0 +1,130 @@
+@model IEnumerable<AspNetMvcApp.Models.Coupon>
+@{
+    ViewData["Title"] = "Quản Lý Mã Giảm Giá";
+}
+
+<div class="pm-header">
+    <div>
+        <h1>Quản Lý Mã Giảm Giá</h1>
+        <p>Xem, thêm mới, và xóa các mã giảm giá trong hệ thống</p>
+    </div>
+    <a asp-action="Create" class="pm-btn-add">
+        <i class="fa-solid fa-plus"></i> Thêm Mã Giảm Giá
+    </a>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success" style="border-radius: 12px; font-size: 0.9rem; margin-bottom: 1.5rem; background: rgba(0, 166, 81, 0.1); border: 1px solid rgba(0, 166, 81, 0.2); color: var(--accent-emerald); padding: 0.85rem 1rem;">
+        <i class="fa-solid fa-circle-check me-2"></i> @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger" style="border-radius: 12px; font-size: 0.9rem; margin-bottom: 1.5rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444; padding: 0.85rem 1rem;">
+        <i class="fa-solid fa-circle-exclamation me-2"></i> @TempData["ErrorMessage"]
+    </div>
+}
+
+<div class="pm-table-card">
+    @if (!Model.Any())
+    {
+        <div class="pm-empty">
+            <i class="fa-solid fa-ticket d-block" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+            <h3>Chưa có mã giảm giá nào</h3>
+            <p>Hãy thêm mã giảm giá đầu tiên để thu hút khách hàng mua sắm.</p>
+        </div>
+    }
+    else
+    {
+        <table class="pm-table">
+            <thead>
+                <tr>
+                    <th style="width: 10%;">ID</th>
+                    <th style="width: 20%;">Mã</th>
+                    <th style="width: 20%;">Mức Giảm</th>
+                    <th style="width: 18%;">Lượt Sử Dụng</th>
+                    <th style="width: 17%;">Hạn Sử Dụng</th>
+                    <th style="width: 15%;">Thao Tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var coupon in Model)
+                {
+                    var isExpired = coupon.ExpiryDate < DateTime.UtcNow;
+                    var isOutOfLimit = coupon.UsageCount >= coupon.UsageLimit;
+                    var isActive = coupon.IsActive && !isExpired && !isOutOfLimit;
+
+                    <tr>
+                        <td style="color: var(--text-muted); font-weight: 600;">#@coupon.Id</td>
+                        <td>
+                            <span class="pm-coupon-code">
+                                @coupon.Code
+                            </span>
+                        </td>
+                        <td style="font-weight: 600; font-family: 'Outfit', sans-serif;">
+                            @if (coupon.DiscountType == "Percentage")
+                            {
+                                <span>Giảm @coupon.DiscountValue%</span>
+                            }
+                            else
+                            {
+                                <span>Giảm @coupon.DiscountValue.ToString("#,##0") đ</span>
+                            }
+                        </td>
+                        <td>
+                            <div style="font-size: 0.9rem;">
+                                <strong style="color: var(--text-primary);">@coupon.UsageCount</strong> 
+                                <span style="color: var(--text-muted);">/ @coupon.UsageLimit lượt</span>
+                            </div>
+                            <!-- Small Progress bar -->
+                            <div class="pm-progress-bar">
+                                <div class="pm-progress-bar-fill" style="width: @(Math.Min(100, (coupon.UsageCount * 100) / coupon.UsageLimit))%;"></div>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="font-size: 0.85rem; font-weight: 500; margin-bottom: 4px;">
+                                @coupon.ExpiryDate.ToString("dd/MM/yyyy")
+                            </div>
+                            <div>
+                                @if (isExpired)
+                                {
+                                    <span class="pm-badge badge-cancelled"><i class="fa-solid fa-clock"></i> Hết hạn</span>
+                                }
+                                else if (isOutOfLimit)
+                                {
+                                    <span class="pm-badge badge-pending"><i class="fa-solid fa-users-slash"></i> Hết lượt</span>
+                                }
+                                else if (!coupon.IsActive)
+                                {
+                                    <span class="pm-badge badge-inactive"><i class="fa-solid fa-lock"></i> Vô hiệu hóa</span>
+                                }
+                                else
+                                {
+                                    <span class="pm-badge badge-delivered"><i class="fa-solid fa-circle-check"></i> Đang hoạt động</span>
+                                }
+                            </div>
+                        </td>
+                        <td>
+                            <div class="pm-actions">
+                                <form asp-action="Delete" method="post" style="margin:0;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa mã giảm giá này?');">
+                                    <input type="hidden" name="id" value="@coupon.Id" />
+                                    <button type="submit" class="pm-btn-delete" title="Xóa mã giảm giá">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        window.confirm = function() { return true; };
+    </script>
+}

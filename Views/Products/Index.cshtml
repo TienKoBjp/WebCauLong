@@ -1,6 +1,6 @@
 @model AspNetMvcApp.Models.ProductListViewModel
 @{
-    ViewData["Title"] = "Cửa Hàng Cầu Lông KHA Sport";
+    ViewData["Title"] = "Shop Yonex";
 }
 
 <!-- Custom Styles for Premium Products Showcase -->
@@ -609,19 +609,13 @@
     }
 </style>
 
-<!-- Stunning Sport Hero Banner -->
-<div class="sport-hero-banner" id="products-showcase">
-    <div class="sport-hero-overlay"></div>
-    <div class="sport-hero-content">
-        <span class="badge-new-arrival"><i class="fa-solid fa-fire"></i> KHA SPORT 2026</span>
-        <h1 class="hero-title">Đam Mê Bất Tận - Chinh Phục Mọi Trận Đấu</h1>
-        <p class="hero-subtitle">Trải nghiệm các sản phẩm cầu lông cao cấp từ Yonex, Victor, Li-Ning với công nghệ đột phá giúp tối ưu hóa hiệu suất thi đấu của bạn.</p>
-        <div class="hero-buttons">
-            <a href="#filterForm" class="btn-hero-primary"><i class="fa-solid fa-basket-shopping"></i> Mua Ngay</a>
-            <a href="@Url.Action("Index", "Products")" class="btn-hero-secondary"><i class="fa-solid fa-arrow-rotate-left"></i> Tất Cả Sản Phẩm</a>
-        </div>
+<!-- Authentic Yonex Full-Bleed Hero -->
+<div style="background: #000; color: #fff; padding: 5rem 2rem; text-align: center; margin-bottom: 2rem; border-bottom: 4px solid #005eb8;">
+    <h1 style="font-size: 4rem; font-weight: 900; font-family: Arial, sans-serif; font-style: italic; text-transform: uppercase; margin-bottom: 1rem; letter-spacing: -2px; color: #fff; -webkit-text-fill-color: #fff !important;">FAR BEYOND ORDINARY</h1>
+    <p style="font-size: 1.1rem; max-width: 600px; margin: 0 auto 2rem auto; color: #ccc;">Khám phá bộ sưu tập thiết bị cầu lông đỉnh cao, định hình phong cách và tối ưu hiệu suất thi đấu.</p>
+    <div>
+        <a href="#filterForm" class="btn-hero-primary" style="background: #fff !important; color: #000 !important; border: none !important; padding: 1rem 3rem !important;">KHÁM PHÁ NGAY</a>
     </div>
-    <div class="sport-hero-bg-glow"></div>
 </div>
 
 <!-- Premium Filter & Controls Panel -->
@@ -765,7 +759,7 @@ else
     </div>
 
     <!-- Stunning Glassmorphic Pagination Controls -->
-    if (Model.TotalPages > 1)
+    @if (Model.TotalPages > 1)
     {
         <div class="pagination-container d-flex justify-content-center">
             <div class="pagination-wrapper">

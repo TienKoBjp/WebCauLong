@@ -1,0 +1,107 @@
+@model AspNetMvcApp.Models.Order
+@{
+    ViewData["Title"] = "Chi Tiết Đơn Hàng #" + Model.Id;
+}
+
+
+
+<div class="pm-header">
+    <div>
+        <h1>Chi Tiết Đơn Hàng #@Model.Id</h1>
+        <p>Xem danh sách sản phẩm đã đặt và cập nhật tiến độ xử lý đơn hàng</p>
+    </div>
+    <a href="@Url.Action("Index")" class="pm-btn-back">
+        <i class="fa-solid fa-arrow-left"></i> Quay lại
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="detail-card">
+            <h3>Sản phẩm trong đơn hàng</h3>
+            <div class="table-responsive">
+                <table class="detail-table">
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th style="width: 20%;">Đơn giá</th>
+                            <th style="width: 15%; text-align: center;">Số lượng</th>
+                            <th style="width: 25%; text-align: right;">Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.OrderItems)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="detail-product-cell">
+                                        @if (item.Product != null)
+                                        {
+                                            <img src="~/product/images/@item.Product.ImagePath" class="detail-product-thumb" alt="@item.Product.Name" />
+                                            <span style="font-weight: 600;">@item.Product.Name</span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: var(--text-muted);">Sản phẩm đã bị xóa khỏi hệ thống</span>
+                                        }
+                                    </div>
+                                </td>
+                                <td>@(item.UnitPrice.ToString("#,##0")) đ</td>
+                                <td style="text-align: center; font-weight: 600;">@item.Quantity</td>
+                                <td style="text-align: right; font-weight: 700;">@((item.UnitPrice * item.Quantity).ToString("#,##0")) đ</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" style="text-align: right; font-weight: 700; padding: 1.25rem 1rem 0 1rem; border-top: 1px solid var(--border-light);">Tổng thanh toán:</td>
+                            <td style="text-align: right; font-weight: 800; font-size: 1.2rem; color: var(--accent-purple); padding: 1.25rem 1rem 0 1rem; border-top: 1px solid var(--border-light);">@(Model.TotalAmount.ToString("#,##0")) đ</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="detail-card">
+            <h3>Thông tin khách hàng</h3>
+            <ul class="info-list">
+                <li>
+                    <strong>Người đặt:</strong>
+                    <span>@Model.CustomerName</span>
+                </li>
+                <li>
+                    <strong>Điện thoại:</strong>
+                    <span>@Model.PhoneNumber</span>
+                </li>
+                <li>
+                    <strong>Địa chỉ nhận:</strong>
+                    <span style="max-width: 60%; text-align: right; font-size: 0.85rem;">@Model.ShippingAddress</span>
+                </li>
+                <li>
+                    <strong>Thời gian đặt:</strong>
+                    <span>@Model.OrderDate.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="detail-card">
+            <h3>Cập nhật trạng thái</h3>
+            <form asp-action="UpdateStatus" method="post">
+                <input type="hidden" name="id" value="@Model.Id" />
+                <select name="status" class="select-custom">
+                    <option value="Pending" selected="@(Model.Status == "Pending" ? "selected" : null)">Chờ xử lý</option>
+                    <option value="Processing" selected="@(Model.Status == "Processing" ? "selected" : null)">Đang chuẩn bị</option>
+                    <option value="Shipped" selected="@(Model.Status == "Shipped" ? "selected" : null)">Đang giao</option>
+                    <option value="Delivered" selected="@(Model.Status == "Delivered" ? "selected" : null)">Đã giao</option>
+                    <option value="Cancelled" selected="@(Model.Status == "Cancelled" ? "selected" : null)">Đã hủy</option>
+                </select>
+                
+                <button type="submit" class="btn-submit">
+                    <i class="fa-solid fa-floppy-disk"></i> Cập Nhật
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

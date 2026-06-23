@@ -1,0 +1,32 @@
+@model AspNetMvcApp.Models.Category
+@{
+    ViewData["Title"] = "Cập Nhật Danh Mục";
+}
+
+
+
+<div class="form-page-header">
+    <h1><i class="fa-solid fa-pen-to-square" style="color: var(--accent-blue); margin-right: 0.50rem;"></i>Chỉnh Sửa Danh Mục</h1>
+    <p>Cập nhật tên danh mục sản phẩm bên dưới.</p>
+</div>
+
+<div class="form-card">
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="Id" />
+        
+        <div class="form-group">
+            <label asp-for="Name" class="form-label">Tên Danh Mục</label>
+            <input asp-for="Name" class="form-control-custom" placeholder="VD: Vợt cầu lông" required />
+            <span asp-validation-for="Name" class="validation-error"></span>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">
+                <i class="fa-solid fa-floppy-disk"></i> Cập Nhật
+            </button>
+            <a asp-action="Index" class="btn-cancel">
+                <i class="fa-solid fa-xmark"></i> Hủy
+            </a>
+        </div>
+    </form>
+</div>

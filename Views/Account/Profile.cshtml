@@ -1,30 +1,49 @@
 @model Microsoft.AspNetCore.Identity.IdentityUser
 @{
     ViewData["Title"] = "Trang Cá Nhân";
+    var orders = ViewBag.Orders as List<AspNetMvcApp.Models.Order> ?? new List<AspNetMvcApp.Models.Order>();
+    var fullName = ViewBag.FullName as string ?? "";
+    var phoneNumber = ViewBag.PhoneNumber as string ?? "";
+    var address = ViewBag.Address as string ?? "";
+    var avatarPath = ViewBag.AvatarPath as string ?? User.FindFirst("AvatarPath")?.Value;
+    var reviewedItems = ViewBag.ReviewedItems as HashSet<string> ?? new HashSet<string>();
 }
 
 <style>
+    .profile-layout {
+        display: grid;
+        grid-template-columns: 4fr 8fr;
+        gap: 2rem;
+        margin: 2rem auto;
+        max-width: 1200px;
+    }
+
+    @@media (max-width: 992px) {
+        .profile-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
     .profile-card {
         background: var(--bg-dark-card);
         border: 1px solid var(--border-light);
         border-radius: 24px;
-        padding: 3rem;
-        max-width: 600px;
-        margin: 2rem auto;
+        padding: 2.5rem 2rem;
         backdrop-filter: var(--glass-blur);
         -webkit-backdrop-filter: var(--glass-blur);
         box-shadow: var(--shadow-soft);
         text-align: center;
         position: relative;
         overflow: hidden;
+        height: fit-content;
     }
 
     .profile-glow {
         position: absolute;
-        width: 250px;
-        height: 250px;
-        top: -125px;
-        right: -125px;
+        width: 200px;
+        height: 200px;
+        top: -100px;
+        right: -100px;
         border-radius: 50%;
         background: radial-gradient(circle, rgba(0, 166, 81, 0.12) 0%, transparent 70%);
         pointer-events: none;
@@ -32,8 +51,8 @@
 
     .profile-avatar-wrapper {
         position: relative;
-        width: 130px;
-        height: 130px;
+        width: 120px;
+        height: 120px;
         margin: 0 auto 1.5rem auto;
         display: flex;
         align-items: center;
@@ -75,7 +94,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 3rem;
+        font-size: 2.5rem;
         font-weight: 700;
         color: var(--text-primary);
         border: 2px solid var(--border-light);
@@ -91,30 +110,56 @@
     }
 
     .profile-email {
-        font-size: 1.5rem;
+        font-size: 1.25rem;
         font-weight: 700;
         color: var(--text-primary);
         font-family: 'Plus Jakarta Sans', sans-serif;
-        margin-bottom: 0.25rem;
+        margin-bottom: 0.35rem;
+        word-break: break-all;
     }
 
     .profile-role {
-        font-size: 0.82rem;
+        font-size: 0.8rem;
         font-weight: 600;
-        background: rgba(0, 166, 81, 0.12);
-        color: var(--accent-blue);
+        background: rgba(0, 166, 81, 0.1);
+        color: var(--accent-purple);
         padding: 0.25rem 0.75rem;
         border-radius: 50px;
-        border: 1px solid rgba(0, 166, 81, 0.25);
+        border: 1px solid rgba(0, 166, 81, 0.2);
         display: inline-block;
         text-transform: uppercase;
         letter-spacing: 0.05em;
     }
 
     .profile-userid {
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         color: var(--text-muted);
         margin-top: 0.5rem;
+    }
+
+    .form-control-custom {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border-light);
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        color: var(--text-primary);
+        font-size: 0.9rem;
+        outline: none;
+        transition: var(--transition-normal);
+        margin-top: 0.25rem;
+    }
+
+    body.theme-light .form-control-custom {
+        background: rgba(0, 0, 0, 0.02);
+        color: #1a1a1a;
+        border-color: rgba(0, 0, 0, 0.08);
+    }
+
+    .form-control-custom:focus {
+        border-color: rgba(0, 166, 81, 0.5);
+        background: rgba(255, 255, 255, 0.06);
+        box-shadow: 0 0 15px rgba(0, 166, 81, 0.12);
     }
 
     .upload-form-group {
@@ -127,29 +172,24 @@
     .upload-label {
         display: block;
         color: var(--text-secondary);
-        font-size: 0.88rem;
+        font-size: 0.85rem;
         font-weight: 600;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.65rem;
         text-align: center;
-    }
-
-    .upload-input-wrapper {
-        position: relative;
-        margin-bottom: 1rem;
     }
 
     .btn-profile-submit {
         background: var(--grad-primary);
         border: none;
         color: #ffffff;
-        padding: 0.75rem 1.5rem;
-        font-size: 0.9rem;
+        padding: 0.7rem 1.25rem;
+        font-size: 0.88rem;
         font-weight: 600;
-        border-radius: 12px;
+        border-radius: 10px;
         width: 100%;
         cursor: pointer;
         transition: var(--transition-fast);
-        box-shadow: 0 4px 15px rgba(0, 166, 81, 0.3);
+        box-shadow: 0 4px 12px rgba(0, 166, 81, 0.25);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -158,19 +198,20 @@
     }
 
     .btn-profile-submit:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(0, 166, 81, 0.4);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 15px rgba(0, 166, 81, 0.35);
     }
 
     .toast-msg {
         border-radius: 12px;
-        padding: 0.85rem 1.25rem;
-        font-size: 0.88rem;
+        padding: 0.8rem 1.2rem;
+        font-size: 0.85rem;
         font-weight: 500;
         display: flex;
         align-items: center;
-        gap: 0.6rem;
+        gap: 0.5rem;
         margin-bottom: 1.5rem;
+        text-align: left;
     }
 
     .toast-msg-success {
@@ -184,83 +225,950 @@
         border: 1px solid rgba(239, 68, 68, 0.2);
         color: #ef4444;
     }
+
+    /* History Orders Cards Styles */
+    .history-card {
+        background: var(--bg-dark-card);
+        border: 1px solid var(--border-light);
+        border-radius: 24px;
+        padding: 2rem;
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        box-shadow: var(--shadow-soft);
+    }
+
+    .history-title {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-weight: 700;
+        font-size: 1.5rem;
+        color: var(--text-primary);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding-bottom: 0.85rem;
+    }
+
+    .history-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .history-table th {
+        padding: 0.85rem 1rem;
+        color: var(--text-muted);
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        border-bottom: 1px solid var(--border-light);
+        text-align: left;
+    }
+
+    body.theme-light .history-table th {
+        background: #f0f7f0;
+        color: #4a554a;
+    }
+
+    .history-table td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border-light);
+        font-size: 0.88rem;
+        color: var(--text-primary);
+        vertical-align: middle;
+    }
+
+    .history-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Status Badges */
+    .pm-badge {
+        padding: 0.25rem 0.6rem;
+        border-radius: 6px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .badge-pending {
+        background: rgba(249, 115, 22, 0.1);
+        color: #f97316;
+        border: 1px solid rgba(249, 115, 22, 0.2);
+    }
+
+    .badge-processing {
+        background: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+        border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    .badge-shipped {
+        background: rgba(99, 102, 241, 0.1);
+        color: #6366f1;
+        border: 1px solid rgba(99, 102, 241, 0.2);
+    }
+
+    .badge-delivered {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--accent-emerald);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .badge-cancelled {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .history-product-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.35rem;
+        font-size: 0.82rem;
+    }
+
+    .history-product-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .history-product-thumb {
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        object-fit: contain;
+        background: #f5f7f5;
+        padding: 2px;
+        border: 1px solid var(--border-light);
+    }
+
+    /* Premium Modals Styles */
+    .modal-overlay-custom {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        z-index: 1050;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        padding: 1.5rem;
+    }
+
+    .modal-overlay-custom.active {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .modal-card-custom {
+        background: var(--bg-dark-card);
+        border: 1px solid var(--border-light);
+        border-radius: 28px;
+        width: 100%;
+        max-width: 650px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        transform: scale(0.95) translateY(10px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        max-height: 90vh;
+    }
+
+    body.theme-light .modal-card-custom {
+        background: #ffffff;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+    }
+
+    .modal-overlay-custom.active .modal-card-custom {
+        transform: scale(1) translateY(0);
+    }
+
+    .modal-header-custom {
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid var(--border-light);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-title-custom {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-weight: 700;
+        font-size: 1.25rem;
+        color: var(--text-primary);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .modal-close-custom {
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        font-size: 1.25rem;
+        cursor: pointer;
+        transition: var(--transition-fast);
+        padding: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+    }
+
+    .modal-close-custom:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-primary);
+    }
+
+    body.theme-light .modal-close-custom:hover {
+        background: rgba(0, 0, 0, 0.05);
+    }
+
+    .modal-body-custom {
+        padding: 2rem;
+        overflow-y: auto;
+        flex: 1;
+    }
+
+    /* Modal details styles */
+    .detail-section-title {
+        font-size: 0.82rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--accent-blue);
+        letter-spacing: 0.05em;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding-bottom: 0.35rem;
+        margin-top: 1.5rem;
+    }
+
+    .detail-section-title:first-of-type {
+        margin-top: 0;
+    }
+
+    body.theme-light .detail-section-title {
+        border-bottom-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .detail-grid-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .info-item {
+        margin-bottom: 0.5rem;
+    }
+
+    .info-label {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin-bottom: 0.15rem;
+    }
+
+    .info-val {
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .rating-stars-interactive {
+        display: flex;
+        gap: 0.5rem;
+        font-size: 2rem;
+        margin: 1rem 0;
+        justify-content: center;
+    }
+
+    .rating-stars-interactive i {
+        cursor: pointer;
+        color: var(--text-muted);
+        transition: transform 0.2s, color 0.2s;
+    }
+
+    .rating-stars-interactive i:hover {
+        transform: scale(1.2);
+    }
+
+    .rating-stars-interactive i.active {
+        color: #ffd700;
+        text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    }
+
+    .review-thumb-img {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border-light);
+        border-radius: 10px;
+        padding: 0.25rem;
+    }
+
+    body.theme-light .review-thumb-img {
+        background: #f8fafc;
+    }
+
+    .modal-footer-custom {
+        padding: 1.25rem 2rem;
+        border-top: 1px solid var(--border-light);
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+    }
+
+    .btn-detail-custom {
+        background: rgba(59, 130, 246, 0.08);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        color: #3b82f6;
+        font-size: 0.75rem;
+        padding: 0.4rem 0.8rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        transition: all 0.2s;
+    }
+
+    .btn-detail-custom:hover {
+        background: #3b82f6;
+        color: #ffffff;
+        border-color: transparent;
+    }
+
+    .modal-items-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.85rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .modal-item-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding-bottom: 0.85rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    body.theme-light .modal-item-row {
+        border-bottom-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .modal-item-row:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .btn-review-mini {
+        background: rgba(245, 158, 11, 0.1);
+        border: 1px solid rgba(245, 158, 11, 0.25);
+        color: #f59e0b;
+        font-size: 0.7rem;
+        padding: 0.25rem 0.65rem;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        transition: all 0.2s;
+    }
+
+    .btn-review-mini:hover {
+        background: #f59e0b;
+        color: #ffffff;
+        border-color: transparent;
+    }
+
+    .btn-review-done {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        color: #10b981;
+        font-size: 0.7rem;
+        padding: 0.25rem 0.65rem;
+        border-radius: 6px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
 </style>
 
-<div class="profile-card">
-    <div class="profile-glow"></div>
+<div class="profile-layout">
+    <!-- Left Column: User Card -->
+    <div class="profile-card">
+        <div class="profile-glow"></div>
 
-    <h2 class="mb-4" style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: var(--text-primary);">Thông Tin Tài Khoản</h2>
+        <h2 class="mb-4" style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: var(--text-primary); font-size: 1.5rem;">Thông Tin Tài Khoản</h2>
 
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="toast-msg toast-msg-success">
-            <i class="fa-solid fa-circle-check"></i>
-            @TempData["SuccessMessage"]
-        </div>
-    }
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="toast-msg toast-msg-error">
-            <i class="fa-solid fa-circle-xmark"></i>
-            @TempData["ErrorMessage"]
-        </div>
-    }
-
-    <div class="profile-avatar-wrapper">
-        <div class="profile-avatar-glow"></div>
-        @if (User.HasClaim(c => c.Type == "AvatarPath"))
+        @if (TempData["SuccessMessage"] != null)
         {
-            <img src="~/product/images/@User.FindFirst("AvatarPath")?.Value" class="profile-avatar-img" alt="Avatar" />
+            <div class="toast-msg toast-msg-success">
+                <i class="fa-solid fa-circle-check"></i>
+                @TempData["SuccessMessage"]
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="toast-msg toast-msg-error">
+                <i class="fa-solid fa-circle-xmark"></i>
+                @TempData["ErrorMessage"]
+            </div>
+        }
+
+        <div class="profile-avatar-wrapper">
+            <div class="profile-avatar-glow"></div>
+            @if (!string.IsNullOrEmpty(avatarPath))
+            {
+                <img src="~/product/images/@avatarPath" class="profile-avatar-img" alt="Avatar" />
+            }
+            else
+            {
+                <div class="profile-initials">@Model.Email?.Substring(0, 2).ToUpper()</div>
+            }
+        </div>
+
+        <div class="profile-info">
+            <div class="profile-email">@Model.Email</div>
+            <div class="profile-role">
+                <i class="fa-solid fa-user-shield me-1"></i> @(User.IsInRole("Admin") ? "Quản Trị Viên" : "Khách Hàng")
+            </div>
+            <div class="profile-userid">ID: #@Model.Id</div>
+        </div>
+
+        <form asp-action="Profile" method="post" enctype="multipart/form-data" style="text-align: left;">
+            <div class="form-group mb-3">
+                <label class="form-label" style="font-size: 0.82rem; font-weight: 600; color: var(--text-secondary);">Họ và Tên</label>
+                <input type="text" name="fullName" value="@fullName" class="form-control-custom" placeholder="VD: Nguyễn Văn A" />
+            </div>
+
+            <div class="form-group mb-3">
+                <label class="form-label" style="font-size: 0.82rem; font-weight: 600; color: var(--text-secondary);">Số Điện Thoại</label>
+                <input type="tel" name="phoneNumber" value="@phoneNumber" class="form-control-custom" placeholder="VD: 0987654321" />
+            </div>
+
+            <div class="form-group mb-3">
+                <label class="form-label" style="font-size: 0.82rem; font-weight: 600; color: var(--text-secondary);">Địa Chỉ Giao Hàng</label>
+                <textarea name="address" class="form-control-custom" rows="2" placeholder="VD: 123 Đường Lớn, Hà Nội">@address</textarea>
+            </div>
+
+            <div class="upload-form-group" style="border-top: 1px solid var(--border-light); padding-top: 1.5rem; margin-top: 1.5rem;">
+                <label class="upload-label" style="text-align: left; font-size: 0.82rem;">Ảnh Đại Diện (Không bắt buộc)</label>
+                <div class="custom-file-upload mb-3">
+                    <input type="file" name="avatarFile" id="avatarFileInput" class="file-input-hidden" accept="image/*" />
+                    <label for="avatarFileInput" class="file-upload-label" style="padding: 0.65rem 1rem;">
+                        <i class="fa-solid fa-image" style="font-size: 1.1rem; margin-right: 0.5rem;"></i>
+                        <span class="file-upload-text" style="font-size: 0.82rem;">Chọn ảnh đại diện...</span>
+                    </label>
+                    <div class="file-upload-preview" id="avatarPreview" style="font-size: 0.78rem;">Chưa chọn hình ảnh nào</div>
+                </div>
+                <button type="submit" class="btn-profile-submit">
+                    <i class="fa-solid fa-floppy-disk"></i> Lưu Thông Tin Cá Nhân
+                </button>
+            </div>
+        </form>
+
+        <div class="mt-4 pt-3" style="border-top: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 0.65rem;">
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="btn-secondary-custom d-inline-flex align-items-center justify-content-center gap-2" style="border-radius: 10px; font-size: 0.82rem; padding: 0.55rem 1rem; text-decoration: none;">
+                    <i class="fa-solid fa-gauge-high"></i> Vào Trang Quản Trị
+                </a>
+            }
+            <a asp-controller="Products" asp-action="Index" class="btn-secondary-custom d-inline-flex align-items-center justify-content-center gap-2" style="border-radius: 10px; font-size: 0.82rem; padding: 0.55rem 1rem; text-decoration: none;">
+                <i class="fa-solid fa-basket-shopping"></i> Quay Lại Mua Sắm
+            </a>
+        </div>
+    </div>
+
+    <!-- Right Column: Order History -->
+    <div class="history-card">
+        <h2 class="history-title">
+            <i class="fa-solid fa-receipt" style="color: var(--accent-blue);"></i> Lịch Sử Đặt Hàng
+        </h2>
+
+        @if (!orders.Any())
+        {
+            <div style="text-align: center; padding: 4rem 2rem; color: var(--text-secondary);">
+                <i class="fa-solid fa-file-invoice-dollar d-block" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1.25rem;"></i>
+                <h4 style="font-size: 1.15rem; color: var(--text-primary); margin-bottom: 0.5rem;">Bạn chưa có đơn hàng nào</h4>
+                <p style="font-size: 0.85rem; max-width: 350px; margin: 0 auto 1.5rem auto;">Hãy khám phá các sản phẩm tuyệt vời của Yonex và đặt mua ngay hôm nay!</p>
+                <a asp-controller="Products" asp-action="Index" class="btn-primary-custom d-inline-flex" style="margin: 0 auto; text-decoration: none; font-size: 0.82rem; padding: 0.55rem 1.25rem;">
+                    <i class="fa-solid fa-basket-shopping"></i> Mua sắm ngay
+                </a>
+            </div>
         }
         else
         {
-            <div class="profile-initials">@Model.Email?.Substring(0, 2).ToUpper()</div>
+            <div class="table-responsive">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 10%;">Đơn Hàng</th>
+                            <th style="width: 15%;">Ngày Mua</th>
+                            <th style="width: 35%;">Chi Tiết Sản Phẩm</th>
+                            <th style="width: 15%;">Tổng Tiền</th>
+                            <th style="width: 15%;">Trạng Thái</th>
+                            <th style="width: 10%;">Hành Động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in orders)
+                        {
+                            var itemsJson = System.Text.Json.JsonSerializer.Serialize(order.OrderItems.Select(oi => new {
+                                productId = oi.ProductId,
+                                productName = oi.Product?.Name ?? "Sản phẩm cũ",
+                                imagePath = oi.Product?.ImagePath ?? "",
+                                quantity = oi.Quantity,
+                                unitPrice = oi.UnitPrice.ToString("#,##0")
+                            }));
+
+                            <tr>
+                                <td style="font-weight: 700; color: var(--text-muted);">#@order.Id</td>
+                                <td>@order.OrderDate.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>
+                                    <div class="history-products-list">
+                                        @foreach (var item in order.OrderItems)
+                                        {
+                                            <div class="history-product-item" style="flex-wrap: wrap;">
+                                                @if (item.Product != null)
+                                                {
+                                                    <img src="~/product/images/@item.Product.ImagePath" class="history-product-thumb" alt="@item.Product.Name" />
+                                                    <span style="font-weight: 500;">@item.Product.Name</span>
+                                                }
+                                                else
+                                                {
+                                                    <span style="color: var(--text-muted); font-style: italic;">Sản phẩm cũ</span>
+                                                }
+                                                <span style="color: var(--text-secondary); margin-left: 0.25rem;">x @item.Quantity</span>
+
+                                                @if (order.Status == "Delivered" && item.Product != null)
+                                                {
+                                                    var reviewKey = $"{order.Id}_{item.ProductId}";
+                                                    var isReviewed = reviewedItems.Contains(reviewKey);
+                                                    if (isReviewed)
+                                                    {
+                                                        <span class="btn-review-done ms-2" style="font-size: 0.65rem; padding: 0.15rem 0.4rem; border-radius: 4px;">
+                                                            <i class="fa-solid fa-check"></i> Đã đánh giá
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button class="btn-review-mini ms-2" 
+                                                                onclick="openReviewModal('@order.Id', '@item.ProductId', '@item.Product.Name.Replace("'", "\\'")', '@Url.Content("~/product/images/" + item.Product.ImagePath)')"
+                                                                style="font-size: 0.65rem; padding: 0.15rem 0.4rem; border-radius: 4px;">
+                                                            <i class="fa-solid fa-star"></i> Đánh giá
+                                                        </button>
+                                                    }
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                </td>
+                                <td style="font-weight: 700; color: var(--text-primary);">@(order.TotalAmount.ToString("#,##0")) đ</td>
+                                <td>
+                                    <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start;">
+                                        @if (order.Status == "Pending")
+                                        {
+                                            <span class="pm-badge badge-pending"><i class="fa-solid fa-clock"></i> Chờ xử lý</span>
+                                            <form asp-action="CancelOrder" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?');">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@order.Id" />
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" style="font-size: 0.7rem; padding: 0.2rem 0.5rem; border-radius: 6px; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem;">
+                                                    <i class="fa-solid fa-circle-xmark"></i> Hủy Đơn
+                                                </button>
+                                            </form>
+                                        }
+                                        else if (order.Status == "Processing")
+                                        {
+                                            <span class="pm-badge badge-processing"><i class="fa-solid fa-gear"></i> Đang xử lý</span>
+                                        }
+                                        else if (order.Status == "Shipped")
+                                        {
+                                            <span class="pm-badge badge-shipped"><i class="fa-solid fa-truck"></i> Đang giao</span>
+                                        }
+                                        else if (order.Status == "Delivered")
+                                        {
+                                            <span class="pm-badge badge-delivered"><i class="fa-solid fa-circle-check"></i> Đã giao</span>
+                                        }
+                                        else if (order.Status == "Cancelled")
+                                        {
+                                            <span class="pm-badge badge-cancelled"><i class="fa-solid fa-circle-xmark"></i> Đã hủy</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="pm-badge bg-secondary">@order.Status</span>
+                                        }
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="btn-detail-custom" 
+                                            data-id="@order.Id"
+                                            data-customer="@order.CustomerName"
+                                            data-phone="@order.PhoneNumber"
+                                            data-address="@order.ShippingAddress"
+                                            data-date="@order.OrderDate.ToLocalTime().ToString("dd/MM/yyyy HH:mm")"
+                                            data-total="@(order.TotalAmount.ToString("#,##0")) đ"
+                                            data-shipping="@(order.ShippingFee.ToString("#,##0")) đ"
+                                            data-discount="@(order.DiscountAmount.ToString("#,##0")) đ"
+                                            data-method="@order.PaymentMethod"
+                                            data-coupon="@order.CouponCode"
+                                            data-status="@order.Status"
+                                            data-items='@itemsJson'
+                                            onclick="openOrderDetailsModal(this)">
+                                        <i class="fa-solid fa-eye"></i> Chi tiết
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         }
     </div>
+</div>
 
-    <div class="profile-info">
-        <div class="profile-email">@Model.Email</div>
-        <div class="profile-role">
-            <i class="fa-solid fa-user-shield me-1"></i> @(User.IsInRole("Admin") ? "Quản Trị Viên" : "Khách Hàng")
-        </div>
-        <div class="profile-userid">ID: #@Model.Id</div>
-    </div>
-
-    <form asp-action="Profile" method="post" enctype="multipart/form-data">
-        <div class="upload-form-group">
-            <label class="upload-label">Thay Đổi Ảnh Đại Diện</label>
-            <div class="custom-file-upload mb-3">
-                <input type="file" name="avatarFile" id="avatarFileInput" class="file-input-hidden" accept="image/*" required />
-                <label for="avatarFileInput" class="file-upload-label">
-                    <i class="fa-solid fa-image"></i>
-                    <span class="file-upload-text">Chọn ảnh đại diện từ máy...</span>
-                </label>
-                <div class="file-upload-preview" id="avatarPreview">Chưa chọn hình ảnh nào</div>
-            </div>
-            <button type="submit" class="btn-profile-submit">
-                <i class="fa-solid fa-cloud-arrow-up"></i> Cập Nhật Ảnh Đại Diện
+<!-- Modal Chi Tiết Đơn Hàng -->
+<div class="modal-overlay-custom" id="orderDetailsModal">
+    <div class="modal-card-custom">
+        <div class="modal-header-custom">
+            <h3 class="modal-title-custom">
+                <i class="fa-solid fa-file-invoice" style="color: var(--accent-blue);"></i> Chi Tiết Đơn Hàng <span id="mOrderId"></span>
+            </h3>
+            <button class="modal-close-custom" onclick="closeOrderDetailsModal()">
+                <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
-    </form>
+        <div class="modal-body-custom">
+            <div class="detail-section-title">Thông tin giao hàng</div>
+            <div class="detail-grid-info">
+                <div class="info-item">
+                    <div class="info-label">Người nhận</div>
+                    <div class="info-val" id="mCustomerName"></div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Số điện thoại</div>
+                    <div class="info-val" id="mPhoneNumber"></div>
+                </div>
+                <div class="info-item" style="grid-column: span 2;">
+                    <div class="info-label">Địa chỉ nhận hàng</div>
+                    <div class="info-val" id="mShippingAddress"></div>
+                </div>
+            </div>
 
-    <div class="mt-4 pt-3" style="border-top: 1px solid var(--border-light); display: flex; gap: 0.75rem; justify-content: center;">
-        @if (User.IsInRole("Admin"))
-        {
-            <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="btn-secondary-custom d-inline-flex align-items-center gap-2" style="border-radius: 10px; font-size: 0.85rem; padding: 0.5rem 1rem; text-decoration: none;">
-                <i class="fa-solid fa-gauge-high"></i> Vào Trang Quản Trị
-            </a>
-        }
-        <a asp-controller="Products" asp-action="Index" class="btn-secondary-custom d-inline-flex align-items-center gap-2" style="border-radius: 10px; font-size: 0.85rem; padding: 0.5rem 1rem; text-decoration: none;">
-            <i class="fa-solid fa-basket-shopping"></i> Quay Lại Mua Sắm
-        </a>
+            <div class="detail-section-title">Thông tin đơn hàng</div>
+            <div class="detail-grid-info">
+                <div class="info-item">
+                    <div class="info-label">Ngày mua</div>
+                    <div class="info-val" id="mOrderDate"></div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Phương thức thanh toán</div>
+                    <div class="info-val" id="mPaymentMethod"></div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Mã giảm giá</div>
+                    <div class="info-val" id="mCouponCode"></div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Trạng thái</div>
+                    <div class="info-val" id="mStatusBadge"></div>
+                </div>
+            </div>
+
+            <div class="detail-section-title">Danh sách sản phẩm</div>
+            <div class="modal-items-list" id="mItemsList"></div>
+
+            <div class="detail-section-title" style="margin-top: 1.5rem;">Thành tiền</div>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.9rem;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: var(--text-secondary);">Phí vận chuyển:</span>
+                    <span style="font-weight: 600; color: var(--text-primary);" id="mShippingFee"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: var(--text-secondary);">Giảm giá:</span>
+                    <span style="font-weight: 600; color: #ef4444;" id="mDiscountAmount"></span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--border-light); padding-top: 0.5rem; font-size: 1.1rem; font-weight: 700;">
+                    <span style="color: var(--text-primary);">Tổng thanh toán:</span>
+                    <span style="color: var(--accent-emerald);" id="mTotalAmount"></span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer-custom">
+            <button class="btn-secondary-custom" onclick="closeOrderDetailsModal()" style="border-radius: 10px; padding: 0.55rem 1.25rem;">Đóng</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Viết Đánh Giá -->
+<div class="modal-overlay-custom" id="productReviewModal">
+    <div class="modal-card-custom" style="max-width: 500px;">
+        <div class="modal-header-custom">
+            <h3 class="modal-title-custom">
+                <i class="fa-solid fa-star" style="color: #ffd700;"></i> Đánh Giá Sản Phẩm
+            </h3>
+            <button class="modal-close-custom" onclick="closeReviewModal()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <form id="reviewForm" onsubmit="submitProductReview(event)">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="productId" id="rProductId" />
+            <input type="hidden" name="orderId" id="rOrderId" />
+            <input type="hidden" name="rating" id="rRatingValue" value="5" />
+            
+            <div class="modal-body-custom">
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-light); padding: 1rem; border-radius: 16px;">
+                    <img id="rProductImage" class="review-thumb-img" alt="" />
+                    <div>
+                        <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin: 0;" id="rProductName"></h4>
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">Đơn hàng #<span id="rOrderIdDisplay"></span></span>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    <label style="font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Chất lượng sản phẩm</label>
+                    <div class="rating-stars-interactive" id="interactiveStars">
+                        <i class="fa-solid fa-star active" data-value="1"></i>
+                        <i class="fa-solid fa-star active" data-value="2"></i>
+                        <i class="fa-solid fa-star active" data-value="3"></i>
+                        <i class="fa-solid fa-star active" data-value="4"></i>
+                        <i class="fa-solid fa-star active" data-value="5"></i>
+                    </div>
+                    <span id="ratingDescription" style="font-size: 0.85rem; font-weight: 700; color: #ffd700;">Cực kỳ hài lòng</span>
+                </div>
+
+                <div class="form-group">
+                    <label style="font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 0.5rem;">Ý kiến nhận xét của bạn</label>
+                    <textarea name="comment" id="rComment" class="form-control-custom" rows="4" required placeholder="Chia sẻ trải nghiệm thực tế của bạn về sản phẩm này nhé (độ bền, màu sắc, cảm giác đánh cầu...)..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer-custom">
+                <button type="button" class="btn-secondary-custom" onclick="closeReviewModal()" style="border-radius: 10px; padding: 0.55rem 1.25rem;">Hủy</button>
+                <button type="submit" class="btn-profile-submit" style="width: auto; border-radius: 10px; padding: 0.55rem 1.5rem;">Gửi Đánh Giá</button>
+            </div>
+        </form>
+    </div>
+</div>
     </div>
 </div>
 
 @section Scripts {
     <script>
-        document.getElementById('avatarFileInput').addEventListener('change', function (e) {
+        document.getElementById('avatarFileInput')?.addEventListener('change', function (e) {
             var fileName = e.target.files.length > 0 ? e.target.files[0].name : "Chưa chọn hình ảnh nào";
             document.getElementById('avatarPreview').textContent = "Đã chọn: " + fileName;
+        });
+
+        // Build reviewed items set from C# ViewBag
+        window.reviewedItemsSet = new Set([
+            @Html.Raw(string.Join(",", reviewedItems.Select(k => $"'{k}'")))
+        ]);
+
+        // Modal Order Details Logic
+        function openOrderDetailsModal(btn) {
+            const id = btn.getAttribute('data-id');
+            const customer = btn.getAttribute('data-customer');
+            const phone = btn.getAttribute('data-phone');
+            const address = btn.getAttribute('data-address');
+            const date = btn.getAttribute('data-date');
+            const total = btn.getAttribute('data-total');
+            const shipping = btn.getAttribute('data-shipping');
+            const discount = btn.getAttribute('data-discount');
+            const method = btn.getAttribute('data-method');
+            const coupon = btn.getAttribute('data-coupon');
+            const status = btn.getAttribute('data-status');
+            const items = JSON.parse(btn.getAttribute('data-items'));
+
+            document.getElementById('mOrderId').textContent = '#' + id;
+            document.getElementById('mCustomerName').textContent = customer;
+            document.getElementById('mPhoneNumber').textContent = phone;
+            document.getElementById('mShippingAddress').textContent = address;
+            document.getElementById('mOrderDate').textContent = date;
+            document.getElementById('mPaymentMethod').textContent = method === 'COD' ? 'Thanh toán COD' : method;
+            document.getElementById('mCouponCode').textContent = coupon ? coupon : 'Không áp dụng';
+            document.getElementById('mShippingFee').textContent = shipping;
+            document.getElementById('mDiscountAmount').textContent = '-' + discount;
+            document.getElementById('mTotalAmount').textContent = total;
+
+            // Render status badge
+            let badgeHtml = '';
+            if (status === 'Pending') badgeHtml = '<span class="pm-badge badge-pending"><i class="fa-solid fa-clock"></i> Chờ xử lý</span>';
+            else if (status === 'Processing') badgeHtml = '<span class="pm-badge badge-processing"><i class="fa-solid fa-gear"></i> Đang xử lý</span>';
+            else if (status === 'Shipped') badgeHtml = '<span class="pm-badge badge-shipped"><i class="fa-solid fa-truck"></i> Đang giao</span>';
+            else if (status === 'Delivered') badgeHtml = '<span class="pm-badge badge-delivered"><i class="fa-solid fa-circle-check"></i> Đã giao</span>';
+            else if (status === 'Cancelled') badgeHtml = '<span class="pm-badge badge-cancelled"><i class="fa-solid fa-circle-xmark"></i> Đã hủy</span>';
+            else badgeHtml = '<span class="pm-badge bg-secondary">' + status + '</span>';
+            
+            document.getElementById('mStatusBadge').innerHTML = badgeHtml;
+
+            // Render items list
+            const listContainer = document.getElementById('mItemsList');
+            listContainer.innerHTML = '';
+            
+            const reviewedSet = window.reviewedItemsSet || new Set();
+
+            items.forEach(item => {
+                const itemRow = document.createElement('div');
+                itemRow.className = 'modal-item-row';
+                
+                let imgHtml = item.imagePath 
+                    ? `<img src="/product/images/${item.imagePath}" class="review-thumb-img" alt="${item.productName}" />`
+                    : `<div class="review-thumb-img" style="display:flex;align-items:center;justify-content:center;font-size:0.6rem;color:var(--text-muted)">No Image</div>`;
+
+                let reviewBtnHtml = '';
+                if (status === 'Delivered') {
+                    const reviewKey = id + '_' + item.productId;
+                    if (reviewedSet.has(reviewKey)) {
+                        reviewBtnHtml = `<span class="btn-review-done"><i class="fa-solid fa-circle-check"></i> Đã đánh giá</span>`;
+                    } else {
+                        // Make sure to escape single quotes in product name
+                        const safeProductName = item.productName.replace(/'/g, "\\'");
+                        reviewBtnHtml = `<button type="button" class="btn-review-mini" onclick="closeOrderDetailsModal(); openReviewModal('${id}', '${item.productId}', '${safeProductName}', '/product/images/${item.imagePath}')"><i class="fa-solid fa-star"></i> Đánh giá</button>`;
+                    }
+                }
+
+                itemRow.innerHTML = `
+                    ${imgHtml}
+                    <div style="flex: 1;">
+                        <h4 style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary); margin: 0 0 0.15rem 0;">${item.productName}</h4>
+                        <span style="font-size: 0.75rem; color: var(--text-secondary);">${item.unitPrice} đ x ${item.quantity}</span>
+                    </div>
+                    <div style="text-align: right;">
+                        ${reviewBtnHtml}
+                    </div>
+                `;
+                listContainer.appendChild(itemRow);
+            });
+
+            document.getElementById('orderDetailsModal').classList.add('active');
+        }
+
+        function closeOrderDetailsModal() {
+            document.getElementById('orderDetailsModal').classList.remove('active');
+        }
+
+        // Modal Review Logic
+        function openReviewModal(orderId, productId, productName, productImage) {
+            document.getElementById('rOrderId').value = orderId;
+            document.getElementById('rProductId').value = productId;
+            document.getElementById('rProductName').textContent = productName;
+            document.getElementById('rOrderIdDisplay').textContent = orderId;
+            document.getElementById('rProductImage').src = productImage;
+            document.getElementById('rComment').value = '';
+            
+            setRatingValue(5);
+
+            document.getElementById('productReviewModal').classList.add('active');
+        }
+
+        function closeReviewModal() {
+            document.getElementById('productReviewModal').classList.remove('active');
+        }
+
+        // Interactive Rating Stars
+        const ratingDescriptions = {
+            1: 'Rất tệ',
+            2: 'Không hài lòng',
+            3: 'Bình thường',
+            4: 'Hài lòng',
+            5: 'Cực kỳ hài lòng'
+        };
+
+        let currentSelectedRating = 5;
+
+        const starElements = document.querySelectorAll('#interactiveStars i');
+        const ratingDescElement = document.getElementById('ratingDescription');
+        const ratingInput = document.getElementById('rRatingValue');
+
+        starElements.forEach(star => {
+            star.addEventListener('mouseover', function() {
+                const hoverValue = parseInt(this.getAttribute('data-value'));
+                highlightStars(hoverValue);
+                ratingDescElement.textContent = ratingDescriptions[hoverValue];
+            });
+
+            star.addEventListener('mouseout', function() {
+                highlightStars(currentSelectedRating);
+                ratingDescElement.textContent = ratingDescriptions[currentSelectedRating];
+            });
+
+            star.addEventListener('click', function() {
+                const clickValue = parseInt(this.getAttribute('data-value'));
+                setRatingValue(clickValue);
+            });
+        });
+
+        function highlightStars(val) {
+            starElements.forEach(star => {
+                const starVal = parseInt(star.getAttribute('data-value'));
+                if (starVal <= val) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        function setRatingValue(val) {
+            currentSelectedRating = val;
+            ratingInput.value = val;
+            highlightStars(val);
+            ratingDescElement.textContent = ratingDescriptions[val];
+        }
+
+        // Submit Product Review via AJAX
+        function submitProductReview(e) {
+            e.preventDefault();
+            const form = document.getElementById('reviewForm');
+            const formData = new FormData(form);
+
+            $.ajax({
+                url: '/Account/SubmitReview',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.success) {
+                        alert(response.message);
+                        closeReviewModal();
+                        location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function() {
+                    alert('Đã xảy ra lỗi khi gửi đánh giá. Vui lòng thử lại sau.');
+                }
+            });
+        }
+
+        // Close modals on clicking outside the card
+        window.addEventListener('click', function(e) {
+            const detailsModal = document.getElementById('orderDetailsModal');
+            const reviewModal = document.getElementById('productReviewModal');
+            if (e.target === detailsModal) {
+                closeOrderDetailsModal();
+            }
+            if (e.target === reviewModal) {
+                closeReviewModal();
+            }
         });
     </script>
 }

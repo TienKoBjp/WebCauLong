@@ -1,0 +1,66 @@
+@model IEnumerable<AspNetMvcApp.Models.Category>
+@{
+    ViewData["Title"] = "Quản Lý Danh Mục";
+}
+
+<div class="pm-header">
+    <div>
+        <h1>Quản Lý Danh Mục</h1>
+        <p>Xem, thêm, sửa, và xóa các danh mục sản phẩm</p>
+    </div>
+    <a asp-action="Create" class="pm-btn-add">
+        <i class="fa-solid fa-plus"></i> Thêm Danh Mục
+    </a>
+</div>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger" style="border-radius: 12px; font-size: 0.9rem; margin-bottom: 1.5rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444; padding: 0.85rem 1rem;">
+        <i class="fa-solid fa-circle-exclamation me-2"></i> @TempData["ErrorMessage"]
+    </div>
+}
+
+<div class="pm-table-card">
+    @if (!Model.Any())
+    {
+        <div class="pm-empty">
+            <i class="fa-solid fa-layer-group d-block" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+            <h3>Chưa có danh mục nào</h3>
+            <p>Hãy thêm danh mục đầu tiên cho cửa hàng.</p>
+        </div>
+    }
+    else
+    {
+        <table class="pm-table">
+            <thead>
+                <tr>
+                    <th style="width: 15%;">ID</th>
+                    <th style="width: 60%;">Tên Danh Mục</th>
+                    <th style="width: 25%;">Thao Tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var category in Model)
+                {
+                    <tr>
+                        <td style="color: var(--text-muted); font-weight: 600;">#@category.Id</td>
+                        <td style="font-weight: 600; font-family: 'Outfit', sans-serif;">@category.Name</td>
+                        <td>
+                            <div class="pm-actions">
+                                <a asp-action="Edit" asp-route-id="@category.Id" class="pm-btn-edit" title="Sửa">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+                                <form asp-action="Delete" method="post" style="margin:0;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa danh mục này?');">
+                                    <input type="hidden" name="id" value="@category.Id" />
+                                    <button type="submit" class="pm-btn-delete" title="Xóa">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

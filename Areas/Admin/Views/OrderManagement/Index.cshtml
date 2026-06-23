@@ -1,0 +1,88 @@
+@model IEnumerable<AspNetMvcApp.Models.Order>
+@{
+    ViewData["Title"] = "Quản Lý Đơn Hàng";
+}
+
+
+
+<div class="pm-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <div>
+        <h1>Quản Lý Đơn Hàng</h1>
+        <p style="margin: 0;">Theo dõi, duyệt và cập nhật trạng thái đơn hàng mua sắm</p>
+    </div>
+    <div>
+        <a href="@Url.Action("ExportToCsv", "OrderManagement", new { area = "Admin" })" class="btn-primary-custom" style="padding: 0.65rem 1.4rem; border-radius: 10px; font-weight: 600; font-size: 0.9rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; border: none; cursor: pointer;">
+            <i class="fa-solid fa-file-csv" style="font-size: 1.15rem;"></i> Xuất Báo Cáo CSV
+        </a>
+    </div>
+</div>
+
+<div class="pm-table-card">
+    @if (!Model.Any())
+    {
+        <div class="pm-empty">
+            <i class="fa-solid fa-folder-open d-block" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+            <h3>Chưa có đơn hàng nào</h3>
+            <p>Hệ thống hiện tại chưa ghi nhận đơn đặt hàng nào.</p>
+        </div>
+    }
+    else
+    {
+        <table class="pm-table">
+            <thead>
+                <tr>
+                    <th style="width: 12%;">Mã ĐH</th>
+                    <th style="width: 25%;">Khách hàng</th>
+                    <th style="width: 20%;">Ngày đặt</th>
+                    <th style="width: 18%;">Tổng tiền</th>
+                    <th style="width: 15%;">Trạng thái</th>
+                    <th style="width: 10%;">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    <tr>
+                        <td style="color: var(--text-muted); font-weight: 600;">#@order.Id</td>
+                        <td style="font-weight: 600; font-family: 'Outfit', sans-serif;">@order.CustomerName</td>
+                        <td>@order.OrderDate.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+                        <td style="font-weight: 700; color: var(--text-primary);">@(order.TotalAmount.ToString("#,##0")) đ</td>
+                        <td>
+                            @if (order.Status == "Pending")
+                            {
+                                <span class="pm-badge badge-pending"><i class="fa-solid fa-clock"></i> Chờ xử lý</span>
+                            }
+                            else if (order.Status == "Processing")
+                            {
+                                <span class="pm-badge badge-processing"><i class="fa-solid fa-gear"></i> Đang chuẩn bị</span>
+                            }
+                            else if (order.Status == "Shipped")
+                            {
+                                <span class="pm-badge badge-shipped"><i class="fa-solid fa-truck"></i> Đang giao</span>
+                            }
+                            else if (order.Status == "Delivered")
+                            {
+                                <span class="pm-badge badge-delivered"><i class="fa-solid fa-circle-check"></i> Đã giao</span>
+                            }
+                            else if (order.Status == "Cancelled")
+                            {
+                                <span class="pm-badge badge-cancelled"><i class="fa-solid fa-circle-xmark"></i> Đã hủy</span>
+                            }
+                            else
+                            {
+                                <span class="pm-badge bg-secondary">@order.Status</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="pm-actions">
+                                <a href="@Url.Action("Details", new { id = order.Id })" class="pm-btn-view" title="Chi tiết đơn hàng">
+                                    <i class="fa-solid fa-eye"></i> Chi tiết
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

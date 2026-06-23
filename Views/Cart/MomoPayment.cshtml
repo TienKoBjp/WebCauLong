@@ -1,0 +1,197 @@
+@model AspNetMvcApp.Models.Order
+@{
+    ViewData["Title"] = "Thanh toán MoMo - YONEX Shop";
+    var transferInfo = $"YONEX SHOP DH {Model.Id}";
+}
+
+<style>
+    .momo-page {
+        max-width: 980px;
+        margin: 2rem auto 4rem;
+        display: grid;
+        grid-template-columns: 5fr 4fr;
+        gap: 2rem;
+    }
+
+    @@media (max-width: 900px) {
+        .momo-page {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .momo-card {
+        background: var(--bg-dark-card);
+        border: 1px solid var(--border-light);
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: var(--shadow-soft);
+    }
+
+    .momo-title {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-weight: 800;
+        color: var(--text-primary);
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+    }
+
+    .momo-title i {
+        color: #a50064;
+    }
+
+    .momo-subtitle {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+    }
+
+    .qr-wrap {
+        text-align: center;
+        padding: 1.25rem;
+        border: 1px solid rgba(165, 0, 100, 0.18);
+        border-radius: 18px;
+        background: linear-gradient(135deg, rgba(165, 0, 100, 0.08), rgba(0, 166, 81, 0.03));
+    }
+
+    .qr-img {
+        width: min(280px, 100%);
+        border-radius: 14px;
+        background: #fff;
+        border: 6px solid #fff;
+        box-shadow: 0 14px 35px rgba(0, 0, 0, 0.16);
+    }
+
+    .pay-amount {
+        margin: 1.25rem 0 0.35rem;
+        font-size: 1.65rem;
+        font-weight: 800;
+        color: var(--accent-emerald);
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.85rem 0;
+        border-bottom: 1px solid var(--border-light);
+        color: var(--text-primary);
+        font-size: 0.92rem;
+    }
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+    .info-row span:first-child {
+        color: var(--text-secondary);
+    }
+
+    .copy-btn {
+        border: 1px solid var(--border-light);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-primary);
+        border-radius: 8px;
+        padding: 0.25rem 0.55rem;
+        font-size: 0.78rem;
+        margin-left: 0.4rem;
+        cursor: pointer;
+    }
+
+    .momo-actions {
+        display: grid;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+    }
+</style>
+
+<div class="dashboard-heading-sec">
+    <div class="welcome-msg">
+        <a href="@Url.Action("Index", "Products")" class="btn-secondary-custom d-inline-flex align-items-center" style="gap: 0.5rem; text-decoration: none; padding: 0.5rem 1.1rem; border-radius: 10px;">
+            <i class="fa-solid fa-arrow-left"></i> Về cửa hàng
+        </a>
+        <h1 style="margin-top: 1rem; font-size: 2.2rem;">Thanh toán MoMo</h1>
+    </div>
+</div>
+
+<div class="momo-page">
+    <div class="momo-card">
+        <h2 class="momo-title"><i class="fa-solid fa-qrcode"></i> Quét mã để thanh toán</h2>
+        <p class="momo-subtitle">
+            Vui lòng chuyển khoản đúng số tiền và nội dung bên dưới. Sau khi hoàn tất, nhấn nút “Đã thanh toán” để xem trang đặt hàng thành công.
+        </p>
+
+        <div class="qr-wrap">
+            <img class="qr-img"
+                 src="https://img.vietqr.io/image/MB-0987654321-print.png?amount=@Model.TotalAmount&addInfo=@(Uri.EscapeDataString(transferInfo))&accountName=YONEX%20STORE%20NHOM%2010"
+                 alt="Mã QR thanh toán MoMo" />
+            <div class="pay-amount">@Model.TotalAmount.ToString("#,##0") đ</div>
+            <div style="color: var(--text-secondary); font-size: 0.9rem;">Mã đơn hàng #@Model.Id</div>
+        </div>
+
+        <form asp-action="ConfirmMomoPayment" method="post" class="momo-actions">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="orderId" value="@Model.Id" />
+            <button type="submit" class="btn-primary-custom w-100" style="justify-content: center; padding: 1rem; border-radius: 12px; font-weight: 800;">
+                <i class="fa-solid fa-circle-check"></i> Đã thanh toán
+            </button>
+            <a href="@Url.Action("Profile", "Account")" class="btn-secondary-custom w-100" style="justify-content: center; text-decoration: none; padding: 0.85rem; border-radius: 12px;">
+                <i class="fa-solid fa-clock"></i> Thanh toán sau
+            </a>
+        </form>
+    </div>
+
+    <div class="momo-card">
+        <h3 class="momo-title" style="font-size: 1.25rem;"><i class="fa-solid fa-file-invoice"></i> Thông tin chuyển khoản</h3>
+        <div class="info-row">
+            <span>Ngân hàng</span>
+            <strong>MB Bank</strong>
+        </div>
+        <div class="info-row">
+            <span>Số tài khoản</span>
+            <strong>0987654321 <button type="button" class="copy-btn" onclick="copyText('0987654321', this)">Sao chép</button></strong>
+        </div>
+        <div class="info-row">
+            <span>Tên tài khoản</span>
+            <strong>YONEX STORE NHOM 10</strong>
+        </div>
+        <div class="info-row">
+            <span>Nội dung</span>
+            <strong>@transferInfo <button type="button" class="copy-btn" onclick="copyText('@transferInfo', this)">Sao chép</button></strong>
+        </div>
+        <div class="info-row">
+            <span>Tạm tính</span>
+            <strong>@((Model.TotalAmount - Model.ShippingFee + Model.DiscountAmount).ToString("#,##0")) đ</strong>
+        </div>
+        <div class="info-row">
+            <span>Phí vận chuyển</span>
+            <strong>@(Model.ShippingFee > 0 ? Model.ShippingFee.ToString("#,##0") + " đ" : "Miễn phí")</strong>
+        </div>
+        @if (Model.DiscountAmount > 0)
+        {
+            <div class="info-row">
+                <span>Giảm giá</span>
+                <strong>-@Model.DiscountAmount.ToString("#,##0") đ</strong>
+            </div>
+        }
+        <div class="info-row">
+            <span>Tổng thanh toán</span>
+            <strong style="color: var(--accent-emerald);">@Model.TotalAmount.ToString("#,##0") đ</strong>
+        </div>
+    </div>
+</div>
+
+<script>
+    function copyText(text, btnElement) {
+        navigator.clipboard.writeText(text).then(function () {
+            var originalText = btnElement.innerText;
+            btnElement.innerText = "Đã sao chép";
+            setTimeout(function () {
+                btnElement.innerText = originalText;
+            }, 1400);
+        });
+    }
+</script>

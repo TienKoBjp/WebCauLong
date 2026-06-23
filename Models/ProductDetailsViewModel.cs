@@ -6,4 +6,5 @@ public class ProductDetailsViewModel
 {
     public Product Product { get; set; } = null!;
     public List<Product> RelatedProducts { get; set; } = new();
+    public List<Product> BundleAccessories { get; set; } = new();
 }

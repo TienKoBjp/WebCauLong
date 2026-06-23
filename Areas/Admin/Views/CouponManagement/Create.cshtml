@@ -1,0 +1,66 @@
+@model AspNetMvcApp.Models.Coupon
+@{
+    ViewData["Title"] = "Thêm Mã Giảm Giá";
+}
+
+<div class="form-page-header">
+    <h1><i class="fa-solid fa-plus" style="color: var(--accent-blue); margin-right: 0.50rem;"></i>Thêm Mã Giảm Giá Mới</h1>
+    <p>Tạo chương trình khuyến mãi mới bằng cách thiết lập mã giảm giá bên dưới.</p>
+</div>
+
+<div class="form-card">
+    <form asp-action="Create" method="post">
+        <div class="form-group">
+            <label asp-for="Code" class="form-label">Mã Giảm Giá (Coupon Code)</label>
+            <input asp-for="Code" class="form-control-custom" style="text-transform: uppercase;" placeholder="VD: YONEX100" required />
+            <span asp-validation-for="Code" class="validation-error"></span>
+            <small style="color: var(--text-muted); font-size: 0.75rem; display: block; margin-top: 4px;">Viết liền không dấu, tự động chuyển thành chữ in hoa.</small>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label asp-for="DiscountType" class="form-label">Loại Giảm Giá</label>
+                <select asp-for="DiscountType" class="form-control-custom" style="background-color: var(--bg-dark-card);">
+                    <option value="Fixed">Số tiền cố định (đ)</option>
+                    <option value="Percentage">Phần trăm (%)</option>
+                </select>
+                <span asp-validation-for="DiscountType" class="validation-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="DiscountValue" class="form-label">Giá Trị Giảm</label>
+                <input asp-for="DiscountValue" type="number" step="0.01" class="form-control-custom" placeholder="VD: 50000 hoặc 10" required />
+                <span asp-validation-for="DiscountValue" class="validation-error"></span>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label asp-for="UsageLimit" class="form-label">Giới Hạn Số Lần Sử Dụng</label>
+                <input asp-for="UsageLimit" type="number" min="1" class="form-control-custom" value="100" required />
+                <span asp-validation-for="UsageLimit" class="validation-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ExpiryDate" class="form-label">Ngày Hết Hạn</label>
+                <input asp-for="ExpiryDate" type="date" class="form-control-custom" value="@DateTime.UtcNow.AddDays(30).ToString("yyyy-MM-dd")" required />
+                <span asp-validation-for="ExpiryDate" class="validation-error"></span>
+            </div>
+        </div>
+
+        <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem; margin-top: 1rem;">
+            <input asp-for="IsActive" type="checkbox" style="width: 18px; height: 18px; accent-color: var(--accent-purple); cursor: pointer;" checked />
+            <label asp-for="IsActive" style="color: var(--text-primary); font-size: 0.85rem; font-weight: 500; cursor: pointer; margin: 0;">Kích hoạt mã giảm giá ngay khi tạo</label>
+            <span asp-validation-for="IsActive" class="validation-error"></span>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">
+                <i class="fa-solid fa-floppy-disk"></i> Tạo Mã Giảm Giá
+            </button>
+            <a asp-action="Index" class="btn-cancel">
+                <i class="fa-solid fa-xmark"></i> Hủy
+            </a>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,501 @@
+@{
+    ViewData["Title"] = "Bộ lọc Chọn Vợt Thông Minh - Shop Yonex";
+}
+
+<style>
+    .selector-container {
+        max-width: 850px;
+        margin: 3rem auto;
+        padding: 0 1rem;
+    }
+
+    .selector-card {
+        background: var(--bg-dark-card);
+        border: 1px solid var(--border-light);
+        border-radius: 24px;
+        padding: 3rem 2.5rem;
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        box-shadow: var(--shadow-soft);
+        position: relative;
+        overflow: hidden;
+        min-height: 480px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .selector-card::before {
+        content: '';
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        top: -150px;
+        right: -150px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(0, 166, 81, 0.1) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    .selector-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .selector-title {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-weight: 800;
+        font-size: 2rem;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .selector-desc {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+    }
+
+    /* Progress bar */
+    .progress-track {
+        width: 100%;
+        height: 6px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 99px;
+        margin-bottom: 2.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .progress-bar-fill {
+        height: 100%;
+        width: 33.33%;
+        background: var(--grad-primary);
+        border-radius: 99px;
+        transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Step Slides */
+    .selector-slide {
+        display: none;
+        animation: slideFadeIn 0.5s ease-out forwards;
+        flex: 1;
+    }
+
+    .selector-slide.active {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    @@keyframes slideFadeIn {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .slide-question {
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    /* Options grid */
+    .options-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
+        margin-bottom: 1.5rem;
+    }
+
+    @@media (max-width: 768px) {
+        .options-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+    }
+
+    .option-card {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--border-light);
+        border-radius: 16px;
+        padding: 2rem 1.5rem;
+        text-align: center;
+        cursor: pointer;
+        transition: var(--transition-normal);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    body.theme-light .option-card {
+        background: #ffffff;
+        border-color: rgba(0, 0, 0, 0.08);
+    }
+
+    .option-card:hover {
+        border-color: rgba(0, 166, 81, 0.4);
+        background: rgba(0, 166, 81, 0.03);
+        transform: translateY(-4px);
+    }
+
+    .option-card.selected {
+        border-color: var(--accent-purple);
+        background: rgba(0, 166, 81, 0.08);
+        box-shadow: 0 0 20px rgba(0, 166, 81, 0.2);
+    }
+
+    .option-icon {
+        font-size: 2.2rem;
+        background: var(--grad-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .option-title {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: var(--text-primary);
+    }
+
+    .option-desc {
+        font-size: 0.82rem;
+        color: var(--text-secondary);
+        line-height: 1.4;
+    }
+
+    /* Navigation buttons */
+    .nav-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        padding-top: 1.5rem;
+    }
+
+    /* Results display */
+    .results-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
+        margin-top: 1.5rem;
+    }
+
+    @@media (max-width: 992px) {
+        .results-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+    }
+
+    .result-product-card {
+        background: rgba(255, 255, 255, 0.01);
+        border: 1px solid var(--border-light);
+        border-radius: 20px;
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: var(--transition-normal);
+        height: 100%;
+    }
+
+    .result-product-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(0, 166, 81, 0.35);
+        background: rgba(255, 255, 255, 0.03);
+    }
+
+    .result-img-box {
+        height: 150px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        padding: 1rem;
+    }
+
+    .result-img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    /* Loading Spinner */
+    .spinner-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        padding: 3rem 0;
+    }
+</style>
+
+<div class="selector-container">
+    <div class="selector-card">
+        <div>
+            <!-- Header -->
+            <div class="selector-header">
+                <h1 class="selector-title">🔍 Bộ Lọc Chọn Vợt Thông Minh</h1>
+                <p class="selector-desc">Chỉ với 3 bước đơn giản, chúng tôi sẽ gợi ý những cây vợt Yonex tốt nhất cho phong cách của bạn</p>
+            </div>
+
+            <!-- Progress tracker -->
+            <div class="progress-track" id="progressTrack">
+                <div class="progress-bar-fill" id="progressBar"></div>
+            </div>
+
+            <!-- STEP 1: PLAYSTYLE -->
+            <div class="selector-slide active" id="step1">
+                <h2 class="slide-question">1. Phong cách thi đấu của bạn là gì?</h2>
+                <div class="options-grid">
+                    <div class="option-card" onclick="selectOption('style', 'Attack', this)">
+                        <i class="fa-solid fa-fire-flame-curved option-icon"></i>
+                        <span class="option-title">Tấn công uy lực</span>
+                        <span class="option-desc">Thích đập cầu mạnh mẽ từ cuối sân, áp đảo đối thủ bằng sức mạnh đột phá.</span>
+                    </div>
+                    <div class="option-card" onclick="selectOption('style', 'Defense', this)">
+                        <i class="fa-solid fa-shield-halved option-icon"></i>
+                        <span class="option-title">Phòng thủ phản tạt</span>
+                        <span class="option-desc">Thích đỡ đập, bỏ nhỏ hiểm hóc, điều cầu và phản công nhanh chớp nhoáng.</span>
+                    </div>
+                    <div class="option-card" onclick="selectOption('style', 'Balanced', this)">
+                        <i class="fa-solid fa-scale-balanced option-icon"></i>
+                        <span class="option-title">Công thủ toàn diện</span>
+                        <span class="option-desc">Lối đánh linh hoạt, thích ứng tốt trong cả tấn công lẫn phòng ngự ổn định.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: SKILL LEVEL -->
+            <div class="selector-slide" id="step2">
+                <h2 class="slide-question">2. Trình độ chơi cầu của bạn ở mức nào?</h2>
+                <div class="options-grid">
+                    <div class="option-card" onclick="selectOption('level', 'Beginner', this)">
+                        <i class="fa-solid fa-seedling option-icon"></i>
+                        <span class="option-title">Mới tập chơi</span>
+                        <span class="option-desc">Mới chơi dưới 6 tháng, cần cây vợt dẻo dễ thuần, trợ lực tốt và dễ kiểm soát.</span>
+                    </div>
+                    <div class="option-card" onclick="selectOption('level', 'Intermediate', this)">
+                        <i class="fa-solid fa-medal option-icon"></i>
+                        <span class="option-title">Phong trào / Khá</span>
+                        <span class="option-desc">Chơi từ 1-3 năm, có lực cổ tay ổn định, muốn nâng cấp vợt cứng hơn để tăng độ chuẩn xác.</span>
+                    </div>
+                    <div class="option-card" onclick="selectOption('level', 'Advanced', this)">
+                        <i class="fa-solid fa-trophy option-icon"></i>
+                        <span class="option-title">Bán chuyên / Chuyên nghiệp</span>
+                        <span class="option-desc">Lực cổ tay cực tốt, kỹ thuật hoàn thiện, yêu cầu cây vợt cao cấp siêu cứng lực vung nhanh.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: BUDGET -->
+            <div class="selector-slide" id="step3">
+                <h2 class="slide-question">3. Ngân sách dự kiến của bạn là bao nhiêu?</h2>
+                <div class="options-grid">
+                    <div class="option-card" onclick="selectOption('budget', 'low', this)">
+                        <i class="fa-solid fa-wallet option-icon"></i>
+                        <span class="option-title">Dưới 3 triệu</span>
+                        <span class="option-desc">Tiết kiệm, ưu tiên các dòng vợt tầm trung, dễ chơi, bền bỉ ổn định.</span>
+                    </div>
+                    <div class="option-card" onclick="selectOption('budget', 'medium', this)">
+                        <i class="fa-solid fa-credit-card option-icon"></i>
+                        <span class="option-title">3 - 4 triệu</span>
+                        <span class="option-desc">Tầm giá lý tưởng để tiếp cận các dòng vợt cận cao cấp và cao cấp chất lượng.</span>
+                    </div>
+                    <div class="option-card" onclick="selectOption('budget', 'high', this)">
+                        <i class="fa-solid fa-gem option-icon"></i>
+                        <span class="option-title">Trên 4 triệu</span>
+                        <span class="option-desc">Không giới hạn, ưu tiên các cây vợt đỉnh cấp quốc tế phiên bản cao cấp nhất.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LOADING SLIDE -->
+            <div class="selector-slide" id="loadingSlide">
+                <div class="spinner-box">
+                    <div class="dot-pulse"><span></span><span></span><span></span></div>
+                    <p style="color: var(--text-secondary); font-weight: 500;">Hệ thống đang phân tích chỉ số và tìm kiếm cây vợt phù hợp...</p>
+                </div>
+            </div>
+
+            <!-- RESULTS SLIDE -->
+            <div class="selector-slide" id="resultsSlide">
+                <h2 class="slide-question" style="margin-bottom: 0.5rem;">🎉 Gợi Ý Vợt Dành Riêng Cho Bạn</h2>
+                <p style="text-align: center; color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">Dựa trên phân tích lối đánh và ngân sách của bạn, đây là 3 cây vợt phù hợp nhất:</p>
+                <div class="results-grid" id="recommendationsContainer">
+                    <!-- Dynamic recommendations will be appended here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Navigation Buttons -->
+        <div class="nav-buttons" id="navButtons">
+            <button class="btn-secondary-custom" id="btnPrev" onclick="prevStep()" style="display: none; border-radius: 10px; padding: 0.6rem 1.5rem;"><i class="fa-solid fa-chevron-left"></i> Quay lại</button>
+            <button class="btn-primary-custom" id="btnNext" onclick="nextStep()" style="border-radius: 10px; padding: 0.6rem 1.5rem;" disabled>Tiếp theo <i class="fa-solid fa-chevron-right"></i></button>
+            <button class="btn-primary-custom" id="btnFinish" onclick="getRecommendations()" style="display: none; border-radius: 10px; padding: 0.6rem 1.8rem;">Xem kết quả <i class="fa-solid fa-square-poll-vertical"></i></button>
+            <button class="btn-secondary-custom" id="btnReset" onclick="resetQuiz()" style="display: none; border-radius: 10px; padding: 0.6rem 1.5rem;"><i class="fa-solid fa-rotate-left"></i> Làm lại</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var currentStep = 1;
+        var selections = {
+            style: '',
+            level: '',
+            budget: ''
+        };
+
+        function selectOption(key, value, card) {
+            // Update selections object
+            selections[key] = value;
+            
+            // Toggle active visual card selection
+            $(card).siblings().removeClass('selected');
+            $(card).addClass('selected');
+
+            // Enable next button
+            if (currentStep < 3) {
+                $('#btnNext').prop('disabled', false);
+            } else if (currentStep == 3) {
+                $('#btnFinish').prop('disabled', false);
+            }
+        }
+
+        function updateProgressBar() {
+            var widthPct = (currentStep / 3) * 100;
+            if (currentStep > 3) widthPct = 100;
+            $('#progressBar').css('width', widthPct + '%');
+        }
+
+        function nextStep() {
+            if (currentStep >= 3) return;
+
+            $('#step' + currentStep).removeClass('active');
+            currentStep++;
+            $('#step' + currentStep).addClass('active');
+
+            // Hide/Show navigation controls
+            $('#btnPrev').show();
+            updateProgressBar();
+
+            // Disable next until an option is selected on the new step
+            var selectedKey = currentStep == 2 ? 'level' : 'budget';
+            if (selections[selectedKey] == '') {
+                $('#btnNext').prop('disabled', true);
+                $('#btnFinish').prop('disabled', true);
+            }
+
+            if (currentStep == 3) {
+                $('#btnNext').hide();
+                $('#btnFinish').show();
+                if (selections.budget != '') {
+                    $('#btnFinish').prop('disabled', false);
+                }
+            }
+        }
+
+        function prevStep() {
+            if (currentStep <= 1) return;
+
+            if (currentStep == 3) {
+                $('#btnFinish').hide();
+                $('#btnNext').show();
+            }
+
+            $('#step' + currentStep).removeClass('active');
+            currentStep--;
+            $('#step' + currentStep).addClass('active');
+
+            updateProgressBar();
+
+            // Enable next button on return slide since it's already selected
+            $('#btnNext').prop('disabled', false);
+
+            if (currentStep == 1) {
+                $('#btnPrev').hide();
+            }
+        }
+
+        function getRecommendations() {
+            $('#step3').removeClass('active');
+            $('#btnPrev').hide();
+            $('#btnFinish').hide();
+            $('#progressTrack').hide();
+            $('#loadingSlide').addClass('active');
+
+            // Simulate call to controller recommendation endpoint
+            $.ajax({
+                url: '/Products/GetRecommendations',
+                type: 'GET',
+                data: selections,
+                success: function(data) {
+                    setTimeout(function() {
+                        $('#loadingSlide').removeClass('active');
+                        $('#resultsSlide').addClass('active');
+                        $('#btnReset').show();
+
+                        var container = $('#recommendationsContainer');
+                        container.empty();
+
+                        if (data && data.length > 0) {
+                            data.forEach(function(p) {
+                                var formattedPrice = new Intl.NumberFormat('vi-VN').format(p.price) + ' đ';
+                                var html = `
+                                    <div class="result-product-card">
+                                        <div>
+                                            <div class="result-img-box">
+                                                <img src="/product/images/${p.imagePath}" alt="${p.name}" class="result-img" />
+                                            </div>
+                                            <h4 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-primary); font-family: 'Plus Jakarta Sans', sans-serif;">${p.name}</h4>
+                                            <p style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 1rem;">${p.description}</p>
+                                        </div>
+                                        <div>
+                                            <div style="font-size: 1.15rem; font-weight: 800; background: var(--grad-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-family: 'Outfit', sans-serif; margin-bottom: 0.75rem;">${formattedPrice}</div>
+                                            <div style="display: flex; gap: 0.5rem;">
+                                                <a href="/Products/Details/${p.id}" class="btn-secondary-custom flex-fill text-center justify-content-center" style="font-size: 0.8rem; padding: 0.5rem; border-radius: 8px; text-decoration: none;">Chi tiết</a>
+                                                <button class="btn-primary-custom flex-fill justify-content-center btn-add-to-cart" data-product-id="${p.id}" style="font-size: 0.8rem; padding: 0.5rem; border-radius: 8px;"><i class="fa-solid fa-cart-plus"></i> Chọn</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                                container.append(html);
+                            });
+                        } else {
+                            container.append('<p style="grid-column: span 3; text-align: center; color: var(--text-secondary);">Rất tiếc, không tìm thấy vợt nào phù hợp với yêu cầu này.</p>');
+                        }
+                    }, 800); // Small timeout to show animation
+                },
+                error: function() {
+                    $('#loadingSlide').removeClass('active');
+                    alert('Đã xảy ra lỗi khi lấy danh sách gợi ý vợt.');
+                    resetQuiz();
+                }
+            });
+        }
+
+        function resetQuiz() {
+            // Reset Selections
+            selections = { style: '', level: '', budget: '' };
+            currentStep = 1;
+
+            $('.option-card').removeClass('selected');
+            $('#resultsSlide').removeClass('active');
+            $('#btnReset').hide();
+            $('#progressTrack').show();
+            $('#progressBar').css('width', '33.33%');
+
+            $('#step1').addClass('active');
+            $('#btnNext').show().prop('disabled', true);
+            $('#btnPrev').hide();
+        }
+    </script>
+}

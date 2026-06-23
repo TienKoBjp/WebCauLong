@@ -3,10 +3,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const body = document.body;
     const themeBtn = document.getElementById("themeToggleBtn");
     
-    if (!themeBtn) return;
-    
-    const darkIcon = themeBtn.querySelector(".theme-icon-dark");
-    const lightIcon = themeBtn.querySelector(".theme-icon-light");
+    if (themeBtn) {
+        const darkIcon = themeBtn.querySelector(".theme-icon-dark");
+        const lightIcon = themeBtn.querySelector(".theme-icon-light");
 
     // 1. Load theme preference from localStorage or default to current HTML class
     const savedTheme = localStorage.getItem("theme");
@@ -39,6 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
             lightIcon.style.display = "none";
         }
     }
+    } // Close if (themeBtn)
 
     // 4. Scroll Reveal Animation for Product Cards
     const cards = document.querySelectorAll(".product-card");
@@ -150,7 +150,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 "X-Requested-With": "XMLHttpRequest"
             },
             success: function (response) {
-                if (response.success) {
+                if (response.requiresLogin) {
+                    showToast('<a href="/Account/Login" style="color: inherit; text-decoration: underline;">Đăng nhập</a> để thêm sản phẩm vào giỏ hàng!', "error");
+                } else if (response.success) {
                     updateCartBadge(response.cartCount);
                     showToast("Đã thêm sản phẩm vào giỏ hàng!");
                 } else {
@@ -179,12 +181,6 @@ document.addEventListener("DOMContentLoaded", function () {
             let currentQty = parseInt(input.value) || 1;
             const newQty = currentQty - 1;
             
-            if (newQty <= 0) {
-                if (!confirm("Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?")) {
-                    return;
-                }
-            }
-            
             updateQuantityAjax(productId, newQty, input);
         }
         
@@ -201,24 +197,24 @@ document.addEventListener("DOMContentLoaded", function () {
             updateQuantityAjax(productId, newQty, input);
         }
         
-        // 3. Remove Item
+        // 3. Remove Item (intercept form submit - no confirm dialog needed)
         const removeBtn = event.target.closest(".btn-remove-item");
         if (removeBtn) {
-            if (!confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            const form = removeBtn.closest(".remove-item-form");
+            const productId = removeBtn.getAttribute("data-product-id") || form?.querySelector('input[name="productId"]')?.value;
+            if (!productId) {
+                if (form) HTMLFormElement.prototype.submit.call(form);
                 return;
             }
-            
-            const productId = removeBtn.getAttribute("data-product-id");
-            removeItemAjax(productId);
+            removeItemAjax(productId, form);
         }
         
         // 4. Clear Cart
         const clearBtn = event.target.closest(".btn-clear-cart");
         if (clearBtn) {
-            if (!confirm("Bạn có chắc chắn muốn xóa toàn bộ sản phẩm trong giỏ hàng?")) {
-                return;
-            }
-            
             clearCartAjax();
         }
     });
@@ -246,6 +242,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 checkCartEmptyState(response.cartCount);
                             }, 300);
                         }
+                        updateCartTotals(response.cartTotal, response.shippingFee, response.grandTotal);
                         showToast("Đã xóa sản phẩm khỏi giỏ hàng!");
                     } else {
                         // Update input value
@@ -256,7 +253,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             subtotalSpan.innerText = formatVND(response.itemTotal);
                         }
                         // Update cart totals
-                        updateCartTotals(response.cartTotal);
+                        updateCartTotals(response.cartTotal, response.shippingFee, response.grandTotal);
                     }
                 } else {
                     showToast("Không thể cập nhật số lượng.", "error");
@@ -268,7 +265,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function removeItemAjax(productId) {
+    function removeItemAjax(productId, fallbackForm) {
         $.ajax({
             url: "/Cart/RemoveItem",
             type: "POST",
@@ -291,13 +288,17 @@ document.addEventListener("DOMContentLoaded", function () {
                         }, 300);
                     }
                     
-                    updateCartTotals(response.cartTotal);
+                    updateCartTotals(response.cartTotal, response.shippingFee, response.grandTotal);
                     showToast("Đã xóa sản phẩm khỏi giỏ hàng!");
                 } else {
                     showToast("Không thể xóa sản phẩm.", "error");
                 }
             },
             error: function () {
+                if (fallbackForm) {
+                    HTMLFormElement.prototype.submit.call(fallbackForm);
+                    return;
+                }
                 showToast("Không thể kết nối đến hệ thống.", "error");
             }
         });
@@ -322,6 +323,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             checkCartEmptyState(0);
                         }, 300);
                     }
+                    updateCartTotals(0, 0, 0);
                     showToast("Đã xóa toàn bộ giỏ hàng!");
                 } else {
                     showToast("Không thể xóa giỏ hàng.", "error");
@@ -333,12 +335,14 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function updateCartTotals(total) {
+    function updateCartTotals(total, shippingFee, finalTotal) {
         const subtotal = document.getElementById("cartSubtotal");
-        const grandTotal = document.getElementById("cartTotal");
+        const shipping = document.getElementById("cartShippingFee");
+        const grandTotalElement = document.getElementById("cartTotal");
         
         if (subtotal) subtotal.innerText = formatVND(total);
-        if (grandTotal) grandTotal.innerText = formatVND(total);
+        if (shipping) shipping.innerText = shippingFee > 0 ? formatVND(shippingFee) : "Miễn phí";
+        if (grandTotalElement) grandTotalElement.innerText = formatVND(finalTotal ?? total);
     }
 
     function checkCartEmptyState(cartCount) {

@@ -554,6 +554,177 @@
         color: #ffffff;
         transform: scale(1.05);
     }
+
+    /* Customer Reviews Section Styles */
+    .reviews-section {
+        background: var(--bg-dark-card);
+        border: 1px solid var(--border-light);
+        border-radius: 24px;
+        padding: 2.5rem;
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        box-shadow: var(--shadow-soft);
+        margin-bottom: 3.5rem;
+        margin-top: 2rem;
+    }
+
+    .reviews-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding-bottom: 1rem;
+    }
+
+    body.theme-light .reviews-header {
+        border-bottom-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .reviews-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        font-family: 'Outfit', sans-serif;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+
+    .reviews-summary-card {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 2rem;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--border-light);
+        padding: 2rem;
+        border-radius: 20px;
+        margin-bottom: 2rem;
+        align-items: center;
+    }
+
+    @@media (max-width: 576px) {
+        .reviews-summary-card {
+            grid-template-columns: 1fr;
+            text-align: center;
+            gap: 1.5rem;
+        }
+    }
+
+    .reviews-avg-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-right: 1px solid var(--border-light);
+        padding-right: 2rem;
+    }
+
+    @@media (max-width: 576px) {
+        .reviews-avg-box {
+            border-right: none;
+            padding-right: 0;
+        }
+    }
+
+    .reviews-avg-score {
+        font-size: 3rem;
+        font-weight: 800;
+        color: #ffd700;
+        font-family: 'Outfit', sans-serif;
+        line-height: 1;
+    }
+
+    .reviews-avg-stars {
+        display: flex;
+        gap: 0.25rem;
+        margin: 0.5rem 0;
+        font-size: 1.1rem;
+        color: #ffd700;
+    }
+
+    .reviews-avg-count {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+    }
+
+    .reviews-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .review-item-card {
+        display: flex;
+        gap: 1.25rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    body.theme-light .review-item-card {
+        border-bottom-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .review-item-card:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .review-user-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: var(--grad-primary);
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Outfit', sans-serif;
+        flex-shrink: 0;
+        border: 2px solid var(--border-light);
+    }
+
+    .review-item-content {
+        flex: 1;
+    }
+
+    .review-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 0.5rem;
+    }
+
+    .review-user-name {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    .review-date {
+        font-size: 0.78rem;
+        color: var(--text-muted);
+    }
+
+    .review-stars {
+        display: flex;
+        gap: 0.15rem;
+        font-size: 0.8rem;
+        color: #ffd700;
+        margin-top: 0.2rem;
+    }
+
+    .review-text {
+        font-size: 0.92rem;
+        line-height: 1.6;
+        color: var(--text-secondary);
+        margin: 0;
+        white-space: pre-line;
+    }
 </style>
 
 <!-- Details Breadcrumb Section -->
@@ -622,7 +793,7 @@
 
             <div class="details-rating-bar">
                 <i class="fa-solid fa-star"></i>
-                <span>@Model.Product.Rating.ToString("0.0") / 5.0 (Đánh giá từ chuyên gia)</span>
+                <span>@Model.Product.Rating.ToString("0.0") / 5.0 (@(Model.Product.ProductReviews.Count) lượt đánh giá)</span>
             </div>
 
             <div class="details-price-tag">
@@ -632,6 +803,60 @@
             <p class="details-description">
                 @Model.Product.Description
             </p>
+
+            @if (Model.BundleAccessories != null && Model.BundleAccessories.Any())
+            {
+                <div class="bundle-box" style="margin: 2rem 0; padding: 1.5rem; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-light); border-radius: 16px; backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);">
+                    <h4 style="font-size: 1.1rem; font-weight: 700; color: var(--accent-purple); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; font-family: 'Plus Jakarta Sans', sans-serif;">
+                        <i class="fa-solid fa-fire-flame-curved" style="color: #ff5e62;"></i> MUA KÈM DEAL SỐC (Ưu đãi 10% phụ kiện)
+                    </h4>
+                    <div class="bundle-items" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        <!-- Current Product -->
+                        <div class="bundle-item" style="display: flex; align-items: center; gap: 1rem; padding: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <input type="checkbox" checked disabled id="bundle-main" data-price="@Model.Product.Price" data-id="@Model.Product.Id" style="accent-color: var(--accent-purple); width: 18px; height: 18px;" />
+                            <img src="/product/images/@Model.Product.ImagePath" alt="@Model.Product.Name" style="width: 45px; height: 45px; object-fit: contain; background: rgba(0,0,0,0.1); border-radius: 6px; padding: 2px;" />
+                            <div style="flex: 1;">
+                                <span style="font-size: 0.9rem; font-weight: 600; color: var(--text-primary);">[Sản phẩm hiện tại] @Model.Product.Name</span>
+                            </div>
+                            <span style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary);">@(Model.Product.Price.ToString("#,##0")) đ</span>
+                        </div>
+
+                        <!-- Accessories -->
+                        @foreach (var acc in Model.BundleAccessories)
+                        {
+                            <div class="bundle-item" style="display: flex; align-items: center; gap: 1rem; padding: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                <input type="checkbox" class="bundle-checkbox" data-price="@acc.Price" data-id="@acc.Id" style="accent-color: var(--accent-purple); width: 18px; height: 18px; cursor: pointer;" />
+                                <img src="/product/images/@acc.ImagePath" alt="@acc.Name" style="width: 45px; height: 45px; object-fit: contain; background: rgba(0,0,0,0.1); border-radius: 6px; padding: 2px;" />
+                                <div style="flex: 1;">
+                                    <span style="font-size: 0.9rem; font-weight: 500; color: var(--text-secondary);">@acc.Name</span>
+                                    @if (acc.StockStatus == "OutOfStock")
+                                    {
+                                        <span style="font-size: 0.75rem; color: #ff5e62; margin-left: 0.5rem;">(Hết hàng)</span>
+                                    }
+                                </div>
+                                <div style="text-align: right;">
+                                    <span style="font-size: 0.75rem; text-decoration: line-through; color: var(--text-muted); display: block;">@(acc.Price.ToString("#,##0")) đ</span>
+                                    <span style="font-size: 0.9rem; font-weight: 700; color: #ff5e62;">@((acc.Price * 0.9m).ToString("#,##0")) đ</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Total Price Summary -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.25rem; padding-top: 0.75rem;">
+                        <div>
+                            <span style="font-size: 0.85rem; color: var(--text-secondary);">Tổng cộng Combo:</span>
+                            <div id="bundle-total-price" style="font-size: 1.3rem; font-weight: 800; color: var(--text-primary); font-family: 'Outfit', sans-serif;">
+                                @(Model.Product.Price.ToString("#,##0")) đ
+                            </div>
+                        </div>
+                        <button id="btn-add-bundle" class="btn-primary-custom" style="padding: 0.7rem 1.5rem; border-radius: 12px; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; cursor: pointer; border: none;">
+                            <i class="fa-solid fa-boxes-packing"></i> Mua Combo Đã Chọn
+                        </button>
+                    </div>
+                </div>
+            }
+
 
             <div class="action-row">
                 <button class="btn-buy-now btn-add-to-cart" data-product-id="@Model.Product.Id">
@@ -643,6 +868,93 @@
             </div>
         </div>
     </div>
+</div>
+
+<!-- Customer Reviews Section -->
+<div class="reviews-section">
+    <div class="reviews-header">
+        <h3 class="reviews-title">
+            <i class="fa-solid fa-comments" style="color: var(--accent-orange);"></i> Khách Hàng Đánh Giá
+        </h3>
+        <span style="color: var(--text-muted); font-size: 0.9rem;">
+            Tổng số: @(Model.Product.ProductReviews.Count) đánh giá
+        </span>
+    </div>
+
+    @if (!Model.Product.ProductReviews.Any())
+    {
+        <div style="text-align: center; padding: 3rem 1.5rem; color: var(--text-secondary);">
+            <i class="fa-solid fa-star-half-stroke d-block" style="font-size: 2.5rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+            <h4 style="font-size: 1.1rem; color: var(--text-primary); margin-bottom: 0.25rem;">Chưa có đánh giá nào cho sản phẩm này</h4>
+            <p style="font-size: 0.85rem; max-width: 400px; margin: 0 auto;">Hãy là người mua đầu tiên sở hữu sản phẩm và chia sẻ cảm nhận của bạn tại đây sau khi nhận hàng nhé!</p>
+        </div>
+    }
+    else
+    {
+        var reviews = Model.Product.ProductReviews.OrderByDescending(r => r.CreatedAt).ToList();
+        var avgScore = Model.Product.Rating;
+        
+        <div class="reviews-summary-card">
+            <div class="reviews-avg-box">
+                <span class="reviews-avg-score">@avgScore.ToString("0.0")</span>
+                <div class="reviews-avg-stars">
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        if (i <= Math.Round(avgScore))
+                        {
+                            <i class="fa-solid fa-star"></i>
+                        }
+                        else
+                        {
+                            <i class="fa-regular fa-star"></i>
+                        }
+                    }
+                </div>
+                <span class="reviews-avg-count">@reviews.Count đánh giá từ người mua</span>
+            </div>
+            <div>
+                <h4 style="font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.75rem;">Phản hồi từ khách hàng</h4>
+                <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin: 0;">
+                    100% đánh giá là của khách hàng đã mua và trải nghiệm sản phẩm Yonex chính hãng trên hệ thống Yonex Shop.
+                </p>
+            </div>
+        </div>
+
+        <div class="reviews-list">
+            @foreach (var review in reviews)
+            {
+                <div class="review-item-card">
+                    <div class="review-user-avatar">
+                        @(string.IsNullOrEmpty(review.CustomerName) ? "K" : review.CustomerName.Substring(0, 1).ToUpper())
+                    </div>
+                    <div class="review-item-content">
+                        <div class="review-item-header">
+                            <div>
+                                <h4 class="review-user-name">@review.CustomerName</h4>
+                                <div class="review-stars">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        if (i <= review.Rating)
+                                        {
+                                            <i class="fa-solid fa-star"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="fa-regular fa-star"></i>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            <span class="review-date">
+                                @review.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                            </span>
+                        </div>
+                        <p class="review-text">@review.Comment</p>
+                    </div>
+                </div>
+            }
+        </div>
+    }
 </div>
 
 <!-- Related Products Block -->
@@ -741,5 +1053,45 @@
                 }
             }, 200);
         }
+
+        $(document).ready(function() {
+            function updateBundleTotal() {
+                let total = parseFloat($('#bundle-main').data('price'));
+                $('.bundle-checkbox:checked').each(function() {
+                    let price = parseFloat($(this).data('price'));
+                    total += price * 0.9; // 10% discount
+                });
+                $('#bundle-total-price').text(new Intl.NumberFormat('vi-VN').format(total) + ' đ');
+            }
+
+            $('.bundle-checkbox').on('change', function() {
+                updateBundleTotal();
+            });
+
+            $('#btn-add-bundle').on('click', function() {
+                let ids = [ parseInt($('#bundle-main').data('id')) ];
+                $('.bundle-checkbox:checked').each(function() {
+                    ids.push(parseInt($(this).data('id')));
+                });
+
+                $.ajax({
+                    url: '/Cart/AddBundleToCart',
+                    type: 'POST',
+                    data: { productIds: ids },
+                    success: function(response) {
+                        if (response.success) {
+                            $('#cartCountBadge').text(response.cartCount).show();
+                            alert('Đã thêm combo sản phẩm vào giỏ hàng thành công!');
+                            window.location.href = '/Cart';
+                        } else {
+                            alert('Có lỗi xảy ra: ' + response.message);
+                        }
+                    },
+                    error: function() {
+                        alert('Có lỗi xảy ra khi thêm combo vào giỏ hàng.');
+                    }
+                });
+            });
+        });
     </script>
 }

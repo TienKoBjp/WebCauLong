@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - KHA Sport Admin</title>
+    <title>@ViewData["Title"] - Shop Yonex Admin</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -330,7 +330,7 @@
                     </svg>
                 </div>
                 <div>
-                    <div class="sidebar-brand-text">KHA Sport</div>
+                    <div class="sidebar-brand-text">Shop Yonex</div>
                     <span class="sidebar-brand-badge">ADMIN</span>
                 </div>
             </a>
@@ -345,16 +345,20 @@
 
                 <div class="sidebar-section-label" style="padding: 0; margin-top: 1rem;">Quản Lý</div>
 
-                <a asp-area="Admin" asp-controller="ProductManagement" asp-action="Index"
-                   class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ProductManagement" ? "active" : "")">
-                    <i class="fa-solid fa-box-open"></i>
-                    Sản Phẩm
+                <a href="@Url.Action("Index", "CategoryManagement", new { area = "Admin" })" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "CategoryManagement" ? "active" : "")">
+                    <i class="fa-solid fa-tags"></i> Quản lý Danh Mục
                 </a>
-
-                <a asp-area="Admin" asp-controller="User" asp-action="Index"
-                   class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "User" ? "active" : "")">
-                    <i class="fa-solid fa-users-gear"></i>
-                    Tài Khoản
+                <a href="@Url.Action("Index", "ProductManagement", new { area = "Admin" })" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ProductManagement" ? "active" : "")">
+                    <i class="fa-solid fa-boxes-stacked"></i> Quản lý Sản Phẩm
+                </a>
+                <a href="@Url.Action("Index", "OrderManagement", new { area = "Admin" })" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "OrderManagement" ? "active" : "")">
+                    <i class="fa-solid fa-clipboard-list"></i> Quản lý Đơn Hàng
+                </a>
+                <a href="@Url.Action("Index", "CouponManagement", new { area = "Admin" })" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "CouponManagement" ? "active" : "")">
+                    <i class="fa-solid fa-ticket"></i> Quản lý Mã Giảm Giá
+                </a>
+                <a href="@Url.Action("Index", "User", new { area = "Admin" })" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "User" ? "active" : "")">
+                    <i class="fa-solid fa-users-gear"></i> Tài Khoản
                 </a>
             </nav>
 
@@ -403,7 +407,7 @@
             </main>
 
             <footer class="admin-footer">
-                &copy; 2026 - KHA Sport Admin Panel - Hệ Thống Quản Trị
+                &copy; 2026 - Shop Yonex Admin Panel - Hệ Thống Quản Trị
             </footer>
         </div>
     </div>

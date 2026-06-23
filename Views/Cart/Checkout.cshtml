@@ -1,0 +1,514 @@
+@model List<AspNetMvcApp.Models.CartItem>
+@{
+    ViewData["Title"] = "Thanh toán - Shop Yonex";
+    var userFullName = ViewBag.UserFullName as string ?? "";
+    var userPhone = ViewBag.UserPhone as string ?? "";
+    var userAddress = ViewBag.UserAddress as string ?? "";
+    var cartTotal = ViewBag.CartTotal as decimal? ?? 0m;
+    var shippingFee = ViewBag.ShippingFee as decimal? ?? 0m;
+    var grandTotal = ViewBag.GrandTotal as decimal? ?? cartTotal + shippingFee;
+}
+
+<style>
+    .checkout-layout {
+        display: grid;
+        grid-template-columns: 7fr 5fr;
+        gap: 2rem;
+        margin: 2rem auto;
+        max-width: 1200px;
+    }
+
+    @@media (max-width: 992px) {
+        .checkout-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .checkout-card {
+        background: var(--bg-dark-card);
+        border: 1px solid var(--border-light);
+        border-radius: 20px;
+        padding: 2rem;
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        box-shadow: var(--shadow-soft);
+    }
+
+    .checkout-title {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-weight: 700;
+        font-size: 1.35rem;
+        color: var(--text-primary);
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding-bottom: 0.85rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .form-label {
+        display: block;
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 0.4rem;
+    }
+
+    .form-control-custom {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border-light);
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        color: var(--text-primary);
+        font-size: 0.9rem;
+        outline: none;
+        transition: var(--transition-normal);
+    }
+
+    body.theme-light .form-control-custom {
+        background: rgba(0, 0, 0, 0.02);
+        color: #1a1a1a;
+        border-color: rgba(0, 0, 0, 0.08);
+    }
+
+    .form-control-custom:focus {
+        border-color: rgba(0, 166, 81, 0.5);
+        background: rgba(255, 255, 255, 0.06);
+        box-shadow: 0 0 15px rgba(0, 166, 81, 0.12);
+    }
+
+    /* Payment Option Selectors */
+    .payment-options {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .payment-option-card {
+        border: 1px solid var(--border-light);
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 12px;
+        padding: 1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        transition: var(--transition-fast);
+        position: relative;
+    }
+
+    body.theme-light .payment-option-card {
+        background: #ffffff;
+        border-color: rgba(0, 0, 0, 0.08);
+    }
+
+    .payment-option-card:hover {
+        border-color: rgba(0, 166, 81, 0.35);
+        background: rgba(0, 166, 81, 0.02);
+    }
+
+    .payment-option-card input[type="radio"] {
+        accent-color: var(--accent-blue);
+        width: 18px;
+        height: 18px;
+    }
+
+    .payment-option-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .payment-option-name {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .payment-option-desc {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+    }
+
+    .payment-option-card.active {
+        border-color: var(--accent-purple);
+        background: rgba(0, 166, 81, 0.06);
+        box-shadow: 0 0 15px rgba(0, 166, 81, 0.1);
+    }
+
+    .btn-apply {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--border-light);
+        color: var(--text-primary);
+        padding: 0.75rem 1.25rem;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition-fast);
+    }
+
+    .btn-apply:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    body.theme-light .btn-apply {
+        background: #ffffff;
+        border-color: rgba(0, 0, 0, 0.08);
+        color: #1a1a1a;
+    }
+
+    body.theme-light .btn-apply:hover {
+        background: rgba(0, 0, 0, 0.02);
+    }
+</style>
+
+<div class="dashboard-heading-sec">
+    <div class="welcome-msg">
+        <a href="@Url.Action("Index", "Cart")" class="btn-secondary-custom d-inline-flex align-items-center" style="gap: 0.5rem; text-decoration: none; padding: 0.5rem 1.1rem; border-radius: 10px;">
+            <i class="fa-solid fa-arrow-left"></i> Trở về Giỏ Hàng
+        </a>
+        <h1 style="margin-top: 1rem; font-size: 2.2rem; text-transform: uppercase;">Thanh toán đơn hàng</h1>
+    </div>
+</div>
+
+<div class="checkout-layout">
+    <!-- Left Column: Checkout details -->
+    <div class="checkout-card">
+        <h2 class="checkout-title"><i class="fa-solid fa-truck" style="color: var(--accent-blue); margin-right: 0.5rem;"></i>Thông tin giao hàng</h2>
+        
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem; color: #ef4444; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 0.6rem;">
+                <i class="fa-solid fa-circle-exclamation" style="font-size: 1.1rem;"></i>
+                <span>@TempData["ErrorMessage"]</span>
+            </div>
+        }
+
+        <!-- Autofill option -->
+        @if (!string.IsNullOrEmpty(userFullName) || !string.IsNullOrEmpty(userPhone) || !string.IsNullOrEmpty(userAddress))
+        {
+            <div class="form-check-custom mb-4" style="display: flex; align-items: center; gap: 0.6rem; background: rgba(0, 166, 81, 0.05); padding: 0.85rem 1.1rem; border-radius: 12px; border: 1px solid rgba(0, 166, 81, 0.15);">
+                <input type="checkbox" id="useProfileInfo" style="width: 18px; height: 18px; accent-color: var(--accent-purple); cursor: pointer;" />
+                <label for="useProfileInfo" style="font-size: 0.85rem; font-weight: 700; color: var(--text-primary); cursor: pointer; margin: 0;">Sử dụng thông tin giao hàng từ Trang cá nhân</label>
+            </div>
+        }
+
+        <form asp-action="Checkout" method="post" id="checkoutForm">
+            <div class="form-group">
+                <label class="form-label">Họ và tên người nhận</label>
+                <input type="text" name="customerName" id="customerNameInput" class="form-control-custom" placeholder="VD: Nguyễn Văn A" required />
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Số điện thoại</label>
+                <input type="tel" name="phoneNumber" id="phoneNumberInput" class="form-control-custom" placeholder="VD: 0987654321" required />
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Địa chỉ nhận hàng</label>
+                <textarea name="shippingAddress" id="shippingAddressInput" class="form-control-custom" rows="3" placeholder="VD: 123 Đường Lớn, Quận 1, TP. Hồ Chí Minh" required></textarea>
+            </div>
+
+            <!-- Payment Methods -->
+            <h2 class="checkout-title" style="margin-top: 2rem;"><i class="fa-solid fa-credit-card" style="color: var(--accent-blue); margin-right: 0.5rem;"></i>Phương thức thanh toán</h2>
+            <div class="payment-options" style="grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem;">
+                <div class="payment-option-card active" onclick="selectPayment(this, 'COD')">
+                    <input type="radio" name="paymentMethod" value="COD" checked style="cursor: pointer;" />
+                    <div class="payment-option-info">
+                        <span class="payment-option-name"><i class="fa-solid fa-hand-holding-dollar me-1" style="color: var(--accent-purple);"></i> Tiền mặt (COD)</span>
+                        <span class="payment-option-desc">Thanh toán khi nhận hàng</span>
+                    </div>
+                </div>
+                <div class="payment-option-card" onclick="selectPayment(this, 'BankQR')">
+                    <input type="radio" name="paymentMethod" value="BankQR" style="cursor: pointer;" />
+                    <div class="payment-option-info">
+                        <span class="payment-option-name"><i class="fa-solid fa-qrcode me-1" style="color: var(--accent-blue);"></i> QR Ngân hàng</span>
+                        <span class="payment-option-desc">Chuyển khoản qua mã VietQR</span>
+                    </div>
+                </div>
+                <div class="payment-option-card" onclick="selectPayment(this, 'Momo')">
+                    <input type="radio" name="paymentMethod" value="Momo" style="cursor: pointer;" />
+                    <div class="payment-option-info">
+                        <span class="payment-option-name"><i class="fa-solid fa-wallet me-1" style="color: #a50064;"></i> Ví MoMo</span>
+                        <span class="payment-option-desc">Ví điện tử MoMo Sandbox</span>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-primary-custom w-100" style="padding: 1rem; font-size: 1.05rem; font-weight: 700; border-radius: 12px; margin-top: 1rem;">
+                <i class="fa-solid fa-circle-check"></i> XÁC NHẬN ĐẶT HÀNG
+            </button>
+        </form>
+    </div>
+
+    <!-- Right Column: Summary Details -->
+    <div>
+        <div class="checkout-card" style="position: sticky; top: 100px;">
+            <h2 class="checkout-title" style="margin-bottom: 1.25rem;"><i class="fa-solid fa-basket-shopping" style="color: var(--accent-blue); margin-right: 0.5rem;"></i>Chi tiết đơn hàng</h2>
+            
+            <div style="max-height: 250px; overflow-y: auto; padding-right: 0.25rem; margin-bottom: 1.5rem;">
+                @foreach (var item in Model)
+                {
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.04);">
+                        <div style="display: flex; gap: 0.85rem; align-items: center;">
+                            <img src="~/product/images/@item.ImagePath" style="width: 44px; height: 44px; object-fit: contain; background: #f5f7f5; border-radius: 6px; padding: 2px;" />
+                            <div>
+                                <div style="font-weight: 600; font-size: 0.88rem; color: var(--text-primary);">@item.ProductName</div>
+                                <div style="color: var(--text-secondary); font-size: 0.8rem;">x @item.Quantity</div>
+                            </div>
+                        </div>
+                        <div style="font-weight: 600; font-size: 0.88rem;">@item.TotalPrice.ToString("#,##0") đ</div>
+                    </div>
+                }
+            </div>
+
+            <!-- Coupon Code Section -->
+            <div style="margin-bottom: 1.5rem; padding-top: 1.25rem; border-top: 1px solid rgba(255,255,255,0.05);">
+                <label class="form-label">Mã giảm giá</label>
+                <div style="display: flex; gap: 0.5rem;">
+                    <input type="text" id="couponCodeInput" class="form-control-custom" placeholder="Nhập mã (VD: YONEX100)" style="margin-top: 0; text-transform: uppercase;" />
+                    <button type="button" id="btnApplyCoupon" class="btn-apply">Áp dụng</button>
+                </div>
+                <div id="couponMessage" style="font-size: 0.78rem; margin-top: 0.4rem; display: none;"></div>
+            </div>
+
+            <!-- Subtotal / Discount / Grand Total Breakdown -->
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; background: rgba(255,255,255,0.01); padding: 1rem; border-radius: 12px; border: 1px solid var(--border-light);">
+                <div style="display: flex; justify-content: space-between; font-size: 0.88rem;">
+                    <span style="color: var(--text-secondary);">Tạm tính</span>
+                    <span style="font-weight: 500;">@(cartTotal.ToString("#,##0")) đ</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.88rem;">
+                    <span style="color: var(--text-secondary);">Phí vận chuyển</span>
+                    <span id="shippingFeeVal" style="font-weight: 600; color: @(shippingFee > 0 ? "var(--text-primary)" : "var(--accent-emerald)")">@(shippingFee > 0 ? shippingFee.ToString("#,##0") + " đ" : "Miễn phí")</span>
+                </div>
+                <div id="discountRow" style="display: none; justify-content: space-between; font-size: 0.88rem;">
+                    <span style="color: var(--accent-purple); font-weight: 600;">Giảm giá</span>
+                    <span id="discountVal" style="font-weight: 700; color: var(--accent-purple);">-0 đ</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 1.05rem; font-weight: 700; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.75rem; margin-top: 0.25rem;">
+                    <span>Tổng thanh toán</span>
+                    <span id="grandTotalVal" style="color: var(--text-primary); font-family: 'Plus Jakarta Sans', sans-serif;">@(grandTotal.ToString("#,##0")) đ</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Bank QR Payment Modal -->
+    <div id="bankQrModal" style="display:none; position:fixed; inset:0; z-index:9998; background:rgba(0,0,0,0.65); backdrop-filter:blur(6px); align-items:center; justify-content:center;">
+        <div style="background:var(--bg-dark-card); border:1px solid rgba(0,75,145,0.3); border-radius:24px; padding:2rem; max-width:480px; width:90%; box-shadow:0 30px 80px rgba(0,0,0,0.4); text-align:center; animation: modalIn 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards; position:relative;">
+            <style>
+                @@keyframes modalIn { from { opacity:0; transform:scale(0.85) translateY(20px); } to { opacity:1; transform:scale(1) translateY(0); } }
+                #bankQrModal .bank-amount-badge { background:rgba(0,102,204,0.08); border:1px solid rgba(0,102,204,0.25); border-radius:14px; padding:0.6rem 1.4rem; display:inline-block; margin:0.75rem 0 1.25rem; }
+                #bankQrModal .qr-frame { width:230px; height:230px; margin:0 auto 1rem; border:4px solid #ffffff; border-radius:16px; overflow:hidden; box-shadow:0 8px 30px rgba(0,102,204,0.15); background:#fff; display:flex; align-items:center; justify-content:center; }
+                #bankQrModal .qr-frame img { width:100%; height:100%; object-fit:contain; }
+                #bankQrModal .transfer-info-row { background:rgba(255,255,255,0.04); border:1px solid var(--border-light); border-radius:10px; padding:0.6rem 1rem; display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem; font-size:0.85rem; }
+                body.theme-light #bankQrModal .transfer-info-row { background:rgba(0,0,0,0.03); }
+                #bankQrModal .btn-copy { background:none; border:1px solid rgba(0,102,204,0.35); color:#0066cc; padding:0.2rem 0.65rem; border-radius:6px; font-size:0.75rem; cursor:pointer; transition:all 0.2s; }
+                #bankQrModal .btn-copy:hover { background:rgba(0,102,204,0.08); }
+            </style>
+
+            <!-- Header -->
+            <div style="display:flex; align-items:center; justify-content:center; gap:0.6rem; margin-bottom:0.4rem;">
+                <div style="width:40px; height:40px; background:#005baa; border-radius:50%; display:flex; align-items:center; justify-content:center;">
+                    <i class="fa-solid fa-building-columns" style="color:#fff; font-size:1.1rem;"></i>
+                </div>
+                <h2 style="font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; color:#005baa; margin:0; font-size:1.3rem;">QR Ngân hàng</h2>
+            </div>
+            <p style="color:var(--text-secondary); font-size:0.85rem; margin-bottom:0;">Quét mã VietQR chuyển khoản nhanh bằng ứng dụng Ngân hàng</p>
+
+            <!-- Amount -->
+            <div class="bank-amount-badge">
+                <span style="font-size:1.5rem; font-weight:800; color:#005baa;" id="bankAmountDisplay">0 đ</span>
+            </div>
+
+            <!-- QR Code -->
+            <div class="qr-frame">
+                <img id="bankQrImg" src="" alt="VietQR Code" />
+            </div>
+
+            <!-- Transfer Info -->
+            <div style="text-align:left; margin-bottom:1.25rem;">
+                <div class="transfer-info-row">
+                    <span style="color:var(--text-secondary);">Ngân hàng</span>
+                    <span style="font-weight:700; color:var(--text-primary);">MB BANK</span>
+                </div>
+                <div class="transfer-info-row">
+                    <span style="color:var(--text-secondary);">Số tài khoản</span>
+                    <span style="font-weight:700; color:var(--text-primary);">0799 331 301
+                        <button class="btn-copy" onclick="copyBankText('0799331301', this)">Sao chép</button>
+                    </span>
+                </div>
+                <div class="transfer-info-row">
+                    <span style="color:var(--text-secondary);">Chủ tài khoản</span>
+                    <span style="font-weight:700; color:var(--text-primary);">BUI VAN TIEN</span>
+                </div>
+                <div class="transfer-info-row">
+                    <span style="color:var(--text-secondary);">Nội dung chuyển khoản</span>
+                    <span style="font-weight:700; color:var(--text-primary);" id="bankTransferContent">YONEX DH</span>
+                    <button class="btn-copy" id="btnCopyBankTransfer" onclick="copyBankTransfer(this)">Sao chép</button>
+                </div>
+            </div>
+
+            <p style="font-size:0.78rem; color:var(--text-secondary); margin-bottom:1.25rem; line-height:1.5;">
+                <i class="fa-solid fa-circle-info" style="color:#005baa;"></i>
+                Sau khi chuyển khoản thành công, nhấn nút bên dưới để hoàn tất đặt hàng. Đơn hàng sẽ được duyệt ngay khi chúng tôi kiểm tra giao dịch.
+            </p>
+
+            <!-- Actions -->
+            <div style="display:flex; gap:0.75rem; flex-direction:column;">
+                <button id="btnConfirmBankOrder" onclick="submitOrderAfterBank()" style="background:linear-gradient(135deg,#0066cc,#004b91); color:#fff; border:none; border-radius:12px; padding:0.9rem 1.5rem; font-size:1rem; font-weight:700; cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif; transition:all 0.2s; display:flex; align-items:center; justify-content:center; gap:0.5rem;">
+                    <i class="fa-solid fa-circle-check"></i> Đã chuyển khoản - Xác nhận đặt hàng
+                </button>
+                <button onclick="closeBankModal()" style="background:none; border:1px solid var(--border-light); color:var(--text-secondary); border-radius:12px; padding:0.75rem 1.5rem; font-size:0.9rem; cursor:pointer; transition:all 0.2s;">
+                    <i class="fa-solid fa-arrow-left"></i> Quay lại chỉnh sửa
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Autofill logic
+        document.getElementById('useProfileInfo')?.addEventListener('change', function(e) {
+            if (this.checked) {
+                document.getElementById('customerNameInput').value = decodeHtml(@Html.Raw(Json.Serialize(userFullName)));
+                document.getElementById('phoneNumberInput').value = decodeHtml(@Html.Raw(Json.Serialize(userPhone)));
+                document.getElementById('shippingAddressInput').value = decodeHtml(@Html.Raw(Json.Serialize(userAddress)));
+            } else {
+                document.getElementById('customerNameInput').value = '';
+                document.getElementById('phoneNumberInput').value = '';
+                document.getElementById('shippingAddressInput').value = '';
+            }
+        });
+
+        // Helper to decode HTML strings
+        function decodeHtml(value) {
+            var textArea = document.createElement('textarea');
+            textArea.innerHTML = value || '';
+            return textArea.value;
+        }
+
+        // Payment select cards visual toggle
+        function selectPayment(element, method) {
+            $('.payment-option-card').removeClass('active');
+            $(element).addClass('active');
+            $(element).find('input[type="radio"]').prop('checked', true);
+        }
+
+        // Intercept form submit for BankQR
+        document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+            var selectedPayment = document.querySelector('input[name="paymentMethod"]:checked')?.value;
+            if (selectedPayment === 'BankQR') {
+                e.preventDefault();
+                // Validate form first
+                var name = document.getElementById('customerNameInput').value.trim();
+                var phone = document.getElementById('phoneNumberInput').value.trim();
+                var address = document.getElementById('shippingAddressInput').value.trim();
+                if (!name || !phone || !address) {
+                    alert('Vui lòng điền đầy đủ thông tin giao hàng!');
+                    return;
+                }
+                openBankModal();
+            }
+            // COD & Momo (Sandbox): submit normally (the backend will handle Momo redirect)
+        });
+
+        var grandTotalAmount = @grandTotal;
+        var customerNameVal = '';
+
+        function openBankModal() {
+            customerNameVal = document.getElementById('customerNameInput').value.trim();
+            var amount = grandTotalAmount;
+            var transferContent = 'YONEX DH ' + customerNameVal.split(' ').pop().toUpperCase();
+            
+            // Format amount
+            document.getElementById('bankAmountDisplay').innerText = new Intl.NumberFormat('vi-VN').format(amount) + ' đ';
+            document.getElementById('bankTransferContent').innerText = transferContent;
+            document.getElementById('btnCopyBankTransfer').setAttribute('data-content', transferContent);
+            
+            // Generate QR using free VietQR API
+            var qrUrl = 'https://img.vietqr.io/image/970422-0383918384-compact2.jpg?amount=' + Math.round(amount) + '&addInfo=' + encodeURIComponent(transferContent) + '&accountName=SHOP+YONEX';
+            document.getElementById('bankQrImg').src = qrUrl;
+            
+            // Show modal
+            var modal = document.getElementById('bankQrModal');
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeBankModal() {
+            var modal = document.getElementById('bankQrModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        function submitOrderAfterBank() {
+            var btn = document.getElementById('btnConfirmBankOrder');
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Đang xử lý...';
+            btn.disabled = true;
+            document.getElementById('checkoutForm').submit();
+        }
+
+        function copyBankText(text, btnEl) {
+            navigator.clipboard.writeText(text).then(function() {
+                var orig = btnEl.innerText;
+                btnEl.innerText = '✓ Đã sao chép';
+                btnEl.style.color = 'var(--accent-emerald)';
+                setTimeout(function() { btnEl.innerText = orig; btnEl.style.color = ''; }, 1800);
+            });
+        }
+
+        function copyBankTransfer(btnEl) {
+            var content = btnEl.getAttribute('data-content') || document.getElementById('bankTransferContent').innerText;
+            copyBankText(content, btnEl);
+        }
+
+        // Close modal on backdrop click
+        document.getElementById('bankQrModal').addEventListener('click', function(e) {
+            if (e.target === this) closeBankModal();
+        });
+
+        // Apply Coupon logic via AJAX
+        $('#btnApplyCoupon').click(function() {
+            var code = $('#couponCodeInput').val().trim();
+            if (!code) return;
+
+            var originalHtml = $(this).html();
+            $(this).html('<i class="fa-solid fa-spinner fa-spin"></i>').prop('disabled', true);
+            $('#couponMessage').hide();
+
+            $.ajax({
+                url: '/Cart/ApplyCoupon',
+                type: 'POST',
+                data: { couponCode: code },
+                success: function(res) {
+                    if (res.success) {
+                        $('#couponMessage').text(res.message).css('color', 'var(--accent-emerald)').show();
+                        $('#discountRow').css('display', 'flex');
+                        $('#discountVal').text('-' + new Intl.NumberFormat('vi-VN').format(res.discount) + ' đ');
+                        $('#shippingFeeVal').text(res.shippingFee > 0 ? new Intl.NumberFormat('vi-VN').format(res.shippingFee) + ' đ' : 'Miễn phí');
+                        $('#grandTotalVal').text(new Intl.NumberFormat('vi-VN').format(res.grandTotal) + ' đ');
+                        // Update the amount used for QR
+                        grandTotalAmount = res.grandTotal;
+                    } else {
+                        $('#couponMessage').text(res.message).css('color', '#ef4444').show();
+                    }
+                },
+                error: function() {
+                    $('#couponMessage').text('Lỗi kết nối tới hệ thống.').css('color', '#ef4444').show();
+                },
+                complete: function() {
+                    $('#btnApplyCoupon').html(originalHtml).prop('disabled', false);
+                }
+            });
+        });
+    </script>
+}
+

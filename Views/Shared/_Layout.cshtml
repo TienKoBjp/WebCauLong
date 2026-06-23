@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - KHA Badminton Shop</title>
+    <title>@ViewData["Title"] - YONEX Shop</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Font Awesome for sleek icons -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     
     <!-- Stylesheets -->
@@ -19,141 +19,676 @@
     <link rel="stylesheet" href="~/AspNetMvcApp.styles.css" asp-append-version="true" />
 </head>
 <body class="theme-light">
-    <!-- Premium Glassmorphic Header -->
+
+    <!-- ═══════════════ TOP ANNOUNCEMENT BAR ═══════════════ -->
+    <div class="top-announcement-bar">
+        <div class="top-bar-inner">
+            <div class="top-bar-left">
+                <span class="top-bar-item">
+                    <i class="fa-solid fa-phone-volume"></i> Hotline: <strong>1900 1234</strong>
+                </span>
+                <span class="top-bar-separator"></span>
+                <span class="top-bar-item">
+                    <i class="fa-solid fa-truck-fast"></i> Miễn phí vận chuyển đơn từ <strong>500.000₫</strong>
+                </span>
+            </div>
+            <div class="top-bar-right">
+                <span class="top-bar-item">
+                    <i class="fa-solid fa-certificate"></i> Cam kết chính hãng 100%
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════ MAIN HEADER ═══════════════ -->
     <header class="main-header">
         <div class="header-container">
+            <!-- Logo -->
             <a class="logo-brand" asp-area="" asp-controller="Products" asp-action="Index">
-                <span class="logo-glow"></span>
-                <svg class="logo-icon-svg" viewBox="0 0 24 24" style="width: 28px; height: 28px; margin-right: 0.65rem; z-index: 1;" xmlns="http://www.w3.org/2000/svg">
-                  <defs>
-                    <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#00a651" />
-                      <stop offset="100%" stop-color="#00c853" />
-                    </linearGradient>
-                  </defs>
-                  <!-- Racket Group -->
-                  <g transform="rotate(45 15 9)" stroke="url(#logoGrad)" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <ellipse cx="15" cy="9" rx="4" ry="5" />
-                    <!-- Strings -->
-                    <line x1="12" y1="9" x2="18" y2="9" stroke-width="0.8" opacity="0.6" />
-                    <line x1="15" y1="4" x2="15" y2="14" stroke-width="0.8" opacity="0.6" />
-                    <line x1="13.5" y1="5.5" x2="16.5" y2="12.5" stroke-width="0.8" opacity="0.6" />
-                    <line x1="16.5" y1="5.5" x2="13.5" y2="12.5" stroke-width="0.8" opacity="0.6" />
-                  </g>
-                  <!-- Shaft and Handle -->
-                  <line x1="11.5" y1="12.5" x2="6.5" y2="17.5" stroke="url(#logoGrad)" stroke-width="1.8" stroke-linecap="round" />
-                  <line x1="6.5" y1="17.5" x2="4.5" y2="19.5" stroke="url(#logoGrad)" stroke-width="2.8" stroke-linecap="square" />
-                  <!-- Shuttlecock -->
-                  <g transform="translate(1, -1)" stroke="url(#logoGrad)" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <!-- Cork base -->
-                    <path d="M6 10.5 C 6 11.5, 8 11.5, 8 10.5 Z" fill="url(#logoGrad)" stroke="none" />
-                    <!-- Feathers -->
-                    <path d="M6 10 L 4.5 6 H 9.5 L 8 10 Z" stroke-width="1.2" />
-                    <line x1="5.5" y1="6" x2="6.5" y2="10" stroke-width="0.8" />
-                    <line x1="8.5" y1="6" x2="7.5" y2="10" stroke-width="0.8" />
-                  </g>
-                </svg>
-                <span class="brand-text">KHA Sport</span>
+                <div class="logo-icon-box">
+                    <span class="logo-yy">YY</span>
+                </div>
+                <div class="brand-text-group">
+                    <span class="brand-text">YONEX</span>
+                    <span class="brand-tagline">Official Store</span>
+                </div>
             </a>
-            
-            <div class="user-profile-sec">
-                <a class="nav-link-custom @(ViewContext.RouteData.Values["controller"]?.ToString() == "Products" ? "active" : "")" asp-area="" asp-controller="Products" asp-action="Index" style="padding: 0.5rem 0.9rem; font-size: 0.9rem; font-weight: 600; border-radius: 10px; display: inline-flex; align-items: center; gap: 0.4rem; text-decoration: none;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px; display: inline-block;">
-                      <g transform="rotate(45 15 9)">
-                        <ellipse cx="15" cy="9" rx="4" ry="5" />
-                        <line x1="12" y1="9" x2="18" y2="9" stroke-width="0.8" opacity="0.6" />
-                        <line x1="15" y1="4" x2="15" y2="14" stroke-width="0.8" opacity="0.6" />
-                        <line x1="13.5" y1="5.5" x2="16.5" y2="12.5" stroke-width="0.8" opacity="0.6" />
-                        <line x1="16.5" y1="5.5" x2="13.5" y2="12.5" stroke-width="0.8" opacity="0.6" />
-                      </g>
-                      <line x1="11.5" y1="12.5" x2="6.5" y2="17.5" stroke-width="1.8" />
-                      <line x1="6.5" y1="17.5" x2="4.5" y2="19.5" stroke-width="2.8" stroke-linecap="square" />
-                    </svg>
-                    Sản Phẩm
-                </a>
 
+            <!-- Center Navigation -->
+            <nav class="header-nav">
+                <a class="header-nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Products" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")" asp-area="" asp-controller="Products" asp-action="Index">
+                    <span>BADMINTON</span>
+                </a>
+                <a class="header-nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "RacketSelector" ? "active" : "")" asp-area="" asp-controller="Products" asp-action="RacketSelector">
+                    <span>TƯ VẤN CHỌN VỢT <i class="fa-solid fa-wand-magic-sparkles"></i></span>
+                </a>
+            </nav>
+
+            <!-- Right Actions -->
+            <div class="header-actions">
                 @{
-                    var sessionCart = Context.Session.GetObjectFromJson<List<CartItem>>("Cart");
-                    var initialCartCount = sessionCart?.Sum(i => i.Quantity) ?? 0;
+                    int initialCartCount = 0;
+                    if (User.Identity?.IsAuthenticated == true)
+                    {
+                        var sessionCart = Context.Session.GetObjectFromJson<List<CartItem>>("Cart");
+                        initialCartCount = sessionCart?.Sum(i => i.Quantity) ?? 0;
+                    }
                 }
-                <!-- Shopping Cart Icon with Badge -->
-                <a href="@Url.Action("Index", "Cart")" class="cart-badge-wrapper" title="Giỏ hàng" style="margin-right: 0.5rem;">
-                    <i class="fa-solid fa-cart-shopping"></i>
+
+                <!-- Cart -->
+                <a href="@Url.Action("Index", "Cart")" class="header-action-btn" title="Giỏ hàng">
+                    <i class="fa-solid fa-bag-shopping"></i>
                     <span id="cartCountBadge" class="cart-count" style="@(initialCartCount > 0 ? "" : "display: none;")">@initialCartCount</span>
                 </a>
 
-                <!-- Premium High-Tech Theme Switcher -->
-                <button id="themeToggleBtn" class="btn-theme-toggle" title="Chuyển chế độ sáng/tối">
-                    <i class="fa-regular fa-moon theme-icon-dark"></i>
-                    <i class="fa-regular fa-sun theme-icon-light" style="display: none;"></i>
-                </button>
- 
                 @if (User.Identity != null && User.Identity.IsAuthenticated)
                 {
                     @if (User.IsInRole("Admin"))
                     {
-                        <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="nav-link-custom" style="font-size: 0.85rem; padding: 0.4rem 0.85rem;">
-                            <i class="fa-solid fa-shield-halved nav-icon" style="color: var(--accent-blue);"></i> Admin
+                        <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="header-action-btn" title="Quản trị">
+                            <i class="fa-solid fa-shield-halved"></i>
                         </a>
                     }
 
-                    <div class="notification-badge">
-                        <i class="fa-regular fa-bell"></i>
-                        <span class="badge-dot"></span>
-                    </div>
-
-                    <a href="@Url.Action("Profile", "Account")" class="user-avatar-wrapper" style="position: relative; text-decoration: none;" title="Trang cá nhân">
-                        <div class="avatar-glow"></div>
-                        @if (User.HasClaim(c => c.Type == "AvatarPath"))
-                        {
-                            <img src="~/product/images/@User.FindFirst("AvatarPath")?.Value" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-light);" />
-                        }
-                        else
-                        {
-                            <span class="user-avatar-initials">@User.Identity.Name?.Substring(0, 2).ToUpper()</span>
-                        }
+                    <a href="@Url.Action("Profile", "Account")" class="header-user-pill" title="Trang cá nhân">
+                        <span class="header-avatar-circle">
+                            @if (User.HasClaim(c => c.Type == "AvatarPath"))
+                            {
+                                <img src="~/product/images/@User.FindFirst("AvatarPath")?.Value" alt="Avatar" />
+                            }
+                            else
+                            {
+                                <span class="header-avatar-initials">@User.Identity.Name?.Substring(0, 2).ToUpper()</span>
+                            }
+                        </span>
+                        <span class="header-username">@User.Identity.Name</span>
                     </a>
 
                     <form asp-controller="Account" asp-action="Logout" method="post" style="margin: 0;">
-                        <button type="submit" class="btn-secondary-custom" style="font-size: 0.82rem; padding: 0.4rem 0.85rem; border-radius: 8px;">
-                            <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                        <button type="submit" class="header-btn-logout" title="Đăng xuất">
+                            <i class="fa-solid fa-right-from-bracket"></i>
                         </button>
                     </form>
                 }
                 else
                 {
-                    <a asp-controller="Account" asp-action="Login" class="btn-secondary-custom" style="font-size: 0.85rem; padding: 0.45rem 1rem; border-radius: 10px; text-decoration: none;">
-                        <i class="fa-solid fa-right-to-bracket"></i> Đăng nhập
+                    <a asp-controller="Account" asp-action="Login" class="header-btn-login">
+                        <i class="fa-solid fa-user"></i> Đăng nhập
                     </a>
-                    <a asp-controller="Account" asp-action="Register" class="btn-primary-custom" style="font-size: 0.85rem; padding: 0.45rem 1rem; border-radius: 10px; text-decoration: none;">
-                        <i class="fa-solid fa-user-plus"></i> Đăng ký
+                    <a asp-controller="Account" asp-action="Register" class="header-btn-register">
+                        Đăng ký
                     </a>
                 }
             </div>
         </div>
     </header>
 
+    <!-- ═══════════════ MAIN CONTENT ═══════════════ -->
     <div class="app-container">
         <main role="main" class="main-content">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="main-footer">
-        <div class="footer-container">
-            <span class="footer-copy">&copy; 2026 - KHA Sport - Cửa Hàng Thể Thao Cầu Lông Cao Cấp</span>
-            <div class="footer-links">
-                <a href="#">Hỗ trợ kỹ thuật</a>
+    <!-- Toast Notifications Container -->
+    <div id="toastContainer" class="toast-container-custom"></div>
+
+    <!-- ═══════════════ PREMIUM FOOTER ═══════════════ -->
+    <footer class="site-footer">
+        <div class="footer-wave">
+            <svg viewBox="0 0 1440 100" preserveAspectRatio="none">
+                <path d="M0,40 C360,100 720,0 1080,60 C1260,80 1380,40 1440,50 L1440,100 L0,100 Z" fill="currentColor"/>
+            </svg>
+        </div>
+        <div class="footer-main">
+            <div class="footer-grid">
+                <!-- Brand Column -->
+                <div class="footer-col footer-brand-col">
+                    <div class="footer-logo">
+                        <div class="footer-logo-icon">YY</div>
+                        <span class="footer-logo-text">YONEX</span>
+                    </div>
+                    <p class="footer-desc">
+                        Hệ thống phân phối vợt cầu lông Yonex chính hãng tại Việt Nam. Cam kết sản phẩm 100% authentic.
+                    </p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" class="social-link" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="social-link" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                        <a href="#" class="social-link" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Liên kết nhanh</h4>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fa-solid fa-chevron-right"></i> Trang chủ</a></li>
+                        <li><a href="#"><i class="fa-solid fa-chevron-right"></i> Sản phẩm</a></li>
+                        <li><a href="#"><i class="fa-solid fa-chevron-right"></i> Khuyến mãi</a></li>
+                        <li><a href="#"><i class="fa-solid fa-chevron-right"></i> Giới thiệu</a></li>
+                    </ul>
+                </div>
+
+                <!-- Policies -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Chính sách</h4>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fa-solid fa-chevron-right"></i> Chính sách đổi trả</a></li>
+                        <li><a href="#"><i class="fa-solid fa-chevron-right"></i> Chính sách bảo hành</a></li>
+                        <li><a href="#"><i class="fa-solid fa-chevron-right"></i> Chính sách vận chuyển</a></li>
+                        <li><a href="#"><i class="fa-solid fa-chevron-right"></i> Điều khoản sử dụng</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Liên hệ</h4>
+                    <ul class="footer-contact">
+                        <li>
+                            <i class="fa-solid fa-location-dot"></i>
+                            <span>123 Đường Nguyễn Huệ, Q.1, TP.HCM</span>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-phone"></i>
+                            <span>1900 1234</span>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-envelope"></i>
+                            <span>support@yonexshop.vn</span>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-clock"></i>
+                            <span>8:00 - 21:00 (T2 - CN)</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-bottom-inner">
+                <p>&copy; 2026 <strong>Shop Yonex</strong>. Bản quyền thuộc về Shop Yonex — YONEX Official Store.</p>
+                <div class="footer-payment-icons">
+                    <i class="fa-brands fa-cc-visa"></i>
+                    <i class="fa-brands fa-cc-mastercard"></i>
+                    <i class="fa-solid fa-money-bill-wave"></i>
+                    <i class="fa-solid fa-qrcode"></i>
+                </div>
             </div>
         </div>
     </footer>
 
-    <div class="toast-container-custom" id="toastContainer"></div>
+    <style>
+        /* Premium Floating AI Chatbot styles */
+        .ai-chat-toggle-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #005eb8, #00a550);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: pulse-ring 3s infinite;
+            z-index: 100;
+        }
 
+        .ai-chat-toggle-btn:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 10px 25px rgba(0, 166, 81, 0.4);
+        }
+
+        @@keyframes pulse-ring {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 166, 81, 0.5); }
+            70% { transform: scale(1); box-shadow: 0 0 0 12px rgba(0, 166, 81, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 166, 81, 0); }
+        }
+
+        .ai-chat-window-custom {
+            display: none;
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 370px;
+            height: 520px;
+            background: rgba(22, 28, 48, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+            border-radius: 20px;
+            flex-direction: column;
+            overflow: hidden;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+        }
+
+        body.theme-light .ai-chat-window-custom {
+            background: rgba(255, 255, 255, 0.85);
+            border-color: rgba(15, 23, 42, 0.08);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        /* Header styling */
+        .ai-chat-header {
+            background: linear-gradient(135deg, #005eb8, #00a550);
+            color: #fff;
+            padding: 1rem 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ai-chat-title-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .ai-chat-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            position: relative;
+        }
+
+        .online-indicator {
+            width: 9px;
+            height: 9px;
+            background-color: var(--accent-emerald);
+            border: 1.5px solid #fff;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+        }
+
+        .ai-chat-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: -0.01em;
+        }
+
+        .ai-chat-status {
+            font-size: 0.7rem;
+            opacity: 0.85;
+        }
+
+        .ai-chat-close-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: var(--transition-fast);
+            opacity: 0.8;
+            padding: 4px;
+        }
+
+        .ai-chat-close-btn:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        /* Suggestions box */
+        .ai-chat-suggestions {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        body.theme-light .ai-chat-suggestions {
+            background: rgba(15, 23, 42, 0.02);
+        }
+
+        .suggestion-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            margin-bottom: 0.15rem;
+        }
+
+        .suggestion-pill {
+            background: rgba(0, 166, 81, 0.08);
+            border: 1px solid rgba(0, 166, 81, 0.15);
+            color: var(--accent-emerald);
+            padding: 0.35rem 0.75rem;
+            border-radius: 10px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            text-align: left;
+        }
+
+        .suggestion-pill:hover {
+            background: rgba(0, 166, 81, 0.15);
+            transform: translateX(3px);
+            color: var(--accent-emerald);
+        }
+
+        body.theme-light .suggestion-pill {
+            background: rgba(0, 94, 184, 0.05);
+            border-color: rgba(0, 94, 184, 0.15);
+            color: var(--accent-blue);
+        }
+
+        body.theme-light .suggestion-pill:hover {
+            background: rgba(0, 94, 184, 0.1);
+            color: var(--accent-blue);
+        }
+
+        /* Messages */
+        .ai-chat-messages-wrap {
+            flex: 1;
+            padding: 1.25rem 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            background: rgba(0,0,0,0.02);
+        }
+
+        body.theme-light .ai-chat-messages-wrap {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .ai-message {
+            padding: 0.65rem 1rem;
+            max-width: 85%;
+            font-size: 0.88rem;
+            line-height: 1.45;
+            animation: msg-slide 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            position: relative;
+        }
+
+        @@keyframes msg-slide {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, #005eb8, #00a550);
+            color: #fff;
+            border-radius: 16px 16px 0 16px;
+            align-self: flex-end;
+            box-shadow: 0 4px 12px rgba(0, 94, 184, 0.15);
+        }
+
+        .bot-message {
+            background: rgba(255, 255, 255, 0.07);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px 16px 16px 0;
+            align-self: flex-start;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        body.theme-light .bot-message {
+            background: #ffffff;
+            color: #1f2937;
+            border-color: rgba(15, 23, 42, 0.06);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        /* Message scrollbar */
+        .ai-chat-messages-wrap::-webkit-scrollbar {
+            width: 5px;
+        }
+        .ai-chat-messages-wrap::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .ai-chat-messages-wrap::-webkit-scrollbar-thumb {
+            background: rgba(0, 166, 81, 0.2);
+            border-radius: 99px;
+        }
+
+        /* Input field */
+        .ai-chat-input-area {
+            padding: 0.85rem 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        body.theme-light .ai-chat-input-area {
+            background: #ffffff;
+            border-top-color: rgba(15, 23, 42, 0.06);
+        }
+
+        .ai-chat-input-area input {
+            flex: 1;
+            padding: 0.65rem 1.1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-light);
+            border-radius: 20px;
+            outline: none;
+            font-size: 0.88rem;
+            color: var(--text-primary);
+            transition: var(--transition-normal);
+        }
+
+        body.theme-light .ai-chat-input-area input {
+            background: rgba(15, 23, 42, 0.03);
+            border-color: rgba(15, 23, 42, 0.08);
+            color: #0f172a;
+        }
+
+        .ai-chat-input-area input:focus {
+            border-color: rgba(0, 166, 81, 0.5);
+            background: rgba(255, 255, 255, 0.06);
+            box-shadow: 0 0 10px rgba(0, 166, 81, 0.1);
+        }
+
+        body.theme-light .ai-chat-input-area input:focus {
+            background: rgba(15, 23, 42, 0.05);
+            border-color: rgba(0, 166, 81, 0.5);
+        }
+
+        .ai-chat-send-btn {
+            background: linear-gradient(135deg, #005eb8, #00a550);
+            color: #fff;
+            border: none;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-fast);
+            box-shadow: 0 4px 10px rgba(0, 166, 81, 0.2);
+            flex-shrink: 0;
+        }
+
+        .ai-chat-send-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 166, 81, 0.35);
+        }
+
+        /* Typing Dots Animation */
+        .dot-pulse {
+            display: flex;
+            gap: 0.25rem;
+            align-items: center;
+            padding: 0.2rem 0;
+        }
+
+        .dot-pulse span {
+            width: 6px;
+            height: 6px;
+            background: #888;
+            border-radius: 50%;
+            animation: dot-bounce 1.4s infinite ease-in-out both;
+            display: inline-block;
+        }
+
+        .dot-pulse span:nth-child(1) { animation-delay: -0.32s; }
+        .dot-pulse span:nth-child(2) { animation-delay: -0.16s; }
+
+        @@keyframes dot-bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+    </style>
+
+    <!-- Chatbox AI -->
+    <div id="ai-chatbox-container" style="position: fixed; bottom: 30px; right: 30px; z-index: 9999;">
+        <!-- Chat Icon / Toggle Button -->
+        <button id="ai-chat-toggle" class="ai-chat-toggle-btn" title="Trợ lý AI Yonex">
+            <i class="fa-solid fa-robot chat-toggle-icon"></i>
+            <i class="fa-solid fa-xmark chat-close-icon" style="display: none;"></i>
+        </button>
+
+        <!-- Chat Window -->
+        <div id="ai-chat-window" class="ai-chat-window-custom">
+            <!-- Header -->
+            <div class="ai-chat-header">
+                <div class="ai-chat-title-group">
+                    <div class="ai-chat-avatar">
+                        <i class="fa-solid fa-robot"></i>
+                        <span class="online-indicator"></span>
+                    </div>
+                    <div>
+                        <div class="ai-chat-name">Trợ Lý Yonex AI</div>
+                        <div class="ai-chat-status">Đang hoạt động</div>
+                    </div>
+                </div>
+                <button id="ai-chat-close-btn" class="ai-chat-close-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <!-- Quick Suggestions -->
+            <div class="ai-chat-suggestions">
+                <div class="suggestion-title"><i class="fa-solid fa-lightbulb"></i> Gợi ý câu hỏi:</div>
+                <button class="suggestion-pill" data-question="Vợt Yonex nào đang bán chạy nhất?">🏸 Vợt Yonex bán chạy nhất?</button>
+                <button class="suggestion-pill" data-question="Tôi muốn tìm giày cầu lông giá dưới 2 triệu">👟 Giày dưới 2 triệu?</button>
+                <button class="suggestion-pill" data-question="Chính sách bảo hành và đổi trả thế nào?">📦 Chính sách bảo hành & đổi trả?</button>
+            </div>
+
+            <!-- Messages Area -->
+            <div id="ai-chat-messages" class="ai-chat-messages-wrap">
+                <div class="ai-message bot-message">
+                    Xin chào! Tôi là trợ lý AI của YONEX Shop. Tôi có thể giúp gì cho bạn hôm nay?
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="ai-chat-input-area">
+                <input type="text" id="ai-chat-input" placeholder="Nhập tin nhắn của bạn..." />
+                <button id="ai-chat-send" class="ai-chat-send-btn">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        // Chatbox Logic
+        $(document).ready(function() {
+            var chatWindow = $('#ai-chat-window');
+            var chatToggle = $('#ai-chat-toggle');
+            var chatCloseBtn = $('#ai-chat-close-btn');
+            var chatInput = $('#ai-chat-input');
+            var chatSend = $('#ai-chat-send');
+            var chatMessages = $('#ai-chat-messages');
+
+            // Icons
+            var toggleIcon = $('.chat-toggle-icon');
+            var closeIcon = $('.chat-close-icon');
+
+            // Set initial state without removing it from DOM
+            chatWindow.css({ 'display': 'flex', 'opacity': '0', 'pointer-events': 'none' });
+
+            function toggleChat() {
+                var isHidden = chatWindow.css('opacity') == '0';
+                if(isHidden) {
+                    chatWindow.css({ 'opacity': '1', 'pointer-events': 'auto' });
+                    toggleIcon.hide();
+                    closeIcon.show();
+                    chatToggle.css('transform', 'scale(0.9)');
+                } else {
+                    chatWindow.css({ 'opacity': '0', 'pointer-events': 'none' });
+                    closeIcon.hide();
+                    toggleIcon.show();
+                    chatToggle.css('transform', 'scale(1)');
+                }
+            }
+
+            chatToggle.click(toggleChat);
+            chatCloseBtn.click(toggleChat);
+
+            function appendMessage(text, isUser) {
+                var alignClass = isUser ? 'user-message' : 'bot-message';
+                var msgHtml = '<div class="ai-message ' + alignClass + '">' + text + '</div>';
+                chatMessages.append(msgHtml);
+                chatMessages.scrollTop(chatMessages[0].scrollHeight);
+            }
+
+            function sendMessage(customText) {
+                var text = customText ? customText.trim() : chatInput.val().trim();
+                if(!text) return;
+
+                appendMessage(text, true);
+                if(!customText) chatInput.val('');
+                
+                // Show loading indicator
+                var loadingId = 'loading-' + Date.now();
+                var loadingHtml = '<div id="' + loadingId + '" class="ai-message bot-message"><div class="dot-pulse"><span></span><span></span><span></span></div></div>';
+                chatMessages.append(loadingHtml);
+                chatMessages.scrollTop(chatMessages[0].scrollHeight);
+
+                $.ajax({
+                    url: '/api/Chat',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ message: text }),
+                    success: function(res) {
+                        $('#' + loadingId).remove();
+                        appendMessage(res.reply, false);
+                    },
+                    error: function() {
+                        $('#' + loadingId).remove();
+                        appendMessage('Lỗi kết nối tới máy chủ. Vui lòng thử lại sau.', false);
+                    }
+                });
+            }
+
+            chatSend.click(function() { sendMessage(); });
+            chatInput.keypress(function(e) {
+                if(e.which == 13) sendMessage();
+            });
+
+            // Handle clicking quick suggestions
+            $('.suggestion-pill').click(function() {
+                var question = $(this).attr('data-question');
+                sendMessage(question);
+            });
+        });
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
-

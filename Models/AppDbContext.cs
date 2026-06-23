@@ -14,10 +14,21 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
     public DbSet<Product> Products { get; set; } = null!;
     public DbSet<Category> Categories { get; set; } = null!;
     public DbSet<ProductImage> ProductImages { get; set; } = null!;
+    public DbSet<Order> Orders { get; set; } = null!;
+    public DbSet<OrderItem> OrderItems { get; set; } = null!;
+    public DbSet<Coupon> Coupons { get; set; } = null!;
+    public DbSet<ProductReview> ProductReviews { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        // Configure Product-ProductReview One-to-Many Relationship
+        modelBuilder.Entity<ProductReview>()
+            .HasOne(pr => pr.Product)
+            .WithMany(p => p.ProductReviews)
+            .HasForeignKey(pr => pr.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         // Configure Category-Product One-to-Many Relationship
         modelBuilder.Entity<Product>()
@@ -168,53 +179,53 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
         modelBuilder.Entity<ProductImage>().HasData(
             // Product 1: Yonex Astrox 100 ZZ
             new ProductImage { Id = 1, ProductId = 1, ImagePath = "yonex_astrox_100zz.png", DisplayOrder = 0 },
-            new ProductImage { Id = 2, ProductId = 1, ImagePath = "yonex_pro_bag.png", DisplayOrder = 1 },
-            new ProductImage { Id = 3, ProductId = 1, ImagePath = "yonex_as50.png", DisplayOrder = 2 },
+            new ProductImage { Id = 2, ProductId = 1, ImagePath = "vot-cau-long-yonex-astrox-100zz-kurenai-do-new-2021-5_c525b0.webp", DisplayOrder = 1 },
+            new ProductImage { Id = 3, ProductId = 1, ImagePath = "vot-cau-long-yonex-astrox-100zz-kurenai-do-new-2021-5_f950b4.webp", DisplayOrder = 2 },
 
             // Product 2: Victor Thruster Ryuga II
             new ProductImage { Id = 4, ProductId = 2, ImagePath = "victor_ryuga.png", DisplayOrder = 0 },
-            new ProductImage { Id = 5, ProductId = 2, ImagePath = "yonex_pro_bag.png", DisplayOrder = 1 },
-            new ProductImage { Id = 6, ProductId = 2, ImagePath = "yonex_as50.png", DisplayOrder = 2 },
+            new ProductImage { Id = 5, ProductId = 2, ImagePath = "vot-cau-long-victor-mjolnir-metallic-limited-2024-ma-taiwan-1_1716431827_3d72c0.webp", DisplayOrder = 1 },
+            new ProductImage { Id = 6, ProductId = 2, ImagePath = "tai_xuong__13__8fee50d95d54432fa3de9c82cb524f25_21c56f.webp", DisplayOrder = 2 },
 
             // Product 3: Li-Ning Tectonic 9
             new ProductImage { Id = 7, ProductId = 3, ImagePath = "lining_tectonic9.png", DisplayOrder = 0 },
-            new ProductImage { Id = 8, ProductId = 3, ImagePath = "yonex_pro_bag.png", DisplayOrder = 1 },
-            new ProductImage { Id = 9, ProductId = 3, ImagePath = "yonex_as50.png", DisplayOrder = 2 },
+            new ProductImage { Id = 8, ProductId = 3, ImagePath = "vot-cau-long-lining-axforce-100-black-golden-chinh-hang-3_b6db4a.webp", DisplayOrder = 1 },
+            new ProductImage { Id = 9, ProductId = 3, ImagePath = "vot-cau-long-yonex-nanoflare-1000-game-chinh-hang-1_1ce6b6.jpg", DisplayOrder = 2 },
 
             // Product 4: Yonex Power Cushion 65Z3
             new ProductImage { Id = 10, ProductId = 4, ImagePath = "yonex_65z3.png", DisplayOrder = 0 },
-            new ProductImage { Id = 11, ProductId = 4, ImagePath = "yonex_pro_bag.png", DisplayOrder = 1 },
-            new ProductImage { Id = 12, ProductId = 4, ImagePath = "yonex_as50.png", DisplayOrder = 2 },
+            new ProductImage { Id = 11, ProductId = 4, ImagePath = "giay-cau-long-yonex-shb-65z4-men-trang-2025-chinh-hang_1736970262_1a4dea.webp", DisplayOrder = 1 },
+            new ProductImage { Id = 12, ProductId = 4, ImagePath = "tai_xuong__14__4e41637d74a94e0ab5e21bfb45e94c66_87d39d.webp", DisplayOrder = 2 },
 
             // Product 5: Victor P9200II
             new ProductImage { Id = 13, ProductId = 5, ImagePath = "victor_p9200.png", DisplayOrder = 0 },
-            new ProductImage { Id = 14, ProductId = 5, ImagePath = "yonex_pro_bag.png", DisplayOrder = 1 },
-            new ProductImage { Id = 15, ProductId = 5, ImagePath = "yonex_as50.png", DisplayOrder = 2 },
+            new ProductImage { Id = 14, ProductId = 5, ImagePath = "tai_xuong__14__4e41637d74a94e0ab5e21bfb45e94c66_87d39d.webp", DisplayOrder = 1 },
+            new ProductImage { Id = 15, ProductId = 5, ImagePath = "giay-cau-long-shi-yuqi-lining-ayar015-2-noi-dia-trung-5_cdb716.webp", DisplayOrder = 2 },
 
             // Product 6: Li-Ning Ranger VI
             new ProductImage { Id = 16, ProductId = 6, ImagePath = "lining_ranger.png", DisplayOrder = 0 },
-            new ProductImage { Id = 17, ProductId = 6, ImagePath = "yonex_pro_bag.png", DisplayOrder = 1 },
-            new ProductImage { Id = 18, ProductId = 6, ImagePath = "yonex_as50.png", DisplayOrder = 2 },
+            new ProductImage { Id = 17, ProductId = 6, ImagePath = "giay-cau-long-shi-yuqi-lining-ayar015-2-noi-dia-trung-5_cdb716.webp", DisplayOrder = 1 },
+            new ProductImage { Id = 18, ProductId = 6, ImagePath = "giay-cau-long-yonex-shb-65z4-men-trang-2025-chinh-hang_1736970262_1a4dea.webp", DisplayOrder = 2 },
 
             // Product 7: Hộp Cầu Lông Yonex AS-50
             new ProductImage { Id = 19, ProductId = 7, ImagePath = "yonex_as50.png", DisplayOrder = 0 },
-            new ProductImage { Id = 20, ProductId = 7, ImagePath = "yonex_pro_bag.png", DisplayOrder = 1 },
-            new ProductImage { Id = 21, ProductId = 7, ImagePath = "yonex_astrox_100zz.png", DisplayOrder = 2 },
+            new ProductImage { Id = 20, ProductId = 7, ImagePath = "ong-cau-long-yonex-as50-1_3560e6.webp", DisplayOrder = 1 },
+            new ProductImage { Id = 21, ProductId = 7, ImagePath = "yonex_as50_detail.png", DisplayOrder = 2 },
 
             // Product 8: Bao Vợt Yonex Pro Bag
             new ProductImage { Id = 22, ProductId = 8, ImagePath = "yonex_pro_bag.png", DisplayOrder = 0 },
-            new ProductImage { Id = 23, ProductId = 8, ImagePath = "yonex_astrox_100zz.png", DisplayOrder = 1 },
-            new ProductImage { Id = 24, ProductId = 8, ImagePath = "yonex_as50.png", DisplayOrder = 2 },
+            new ProductImage { Id = 23, ProductId = 8, ImagePath = "yonex_pro_bag_side.png", DisplayOrder = 1 },
+            new ProductImage { Id = 24, ProductId = 8, ImagePath = "yonex_pro_bag_inside.png", DisplayOrder = 2 },
 
             // Product 9: Quấn Cán Yonex AC102EX
             new ProductImage { Id = 25, ProductId = 9, ImagePath = "yonex_grip.png", DisplayOrder = 0 },
-            new ProductImage { Id = 26, ProductId = 9, ImagePath = "yonex_pro_bag.png", DisplayOrder = 1 },
-            new ProductImage { Id = 27, ProductId = 9, ImagePath = "yonex_astrox_100zz.png", DisplayOrder = 2 },
+            new ProductImage { Id = 26, ProductId = 9, ImagePath = "tai_xuong__11__3160c4d902594364bb52dcf8d27f7dba_1024x1024-768x768_722938.webp", DisplayOrder = 1 },
+            new ProductImage { Id = 27, ProductId = 9, ImagePath = "yonex_grip_detail.png", DisplayOrder = 2 },
 
             // Product 10: Áo Thun Cầu Lông Yonex
             new ProductImage { Id = 28, ProductId = 10, ImagePath = "yonex_shirt.png", DisplayOrder = 0 },
-            new ProductImage { Id = 29, ProductId = 10, ImagePath = "yonex_astrox_100zz.png", DisplayOrder = 1 },
-            new ProductImage { Id = 30, ProductId = 10, ImagePath = "yonex_as50.png", DisplayOrder = 2 }
+            new ProductImage { Id = 29, ProductId = 10, ImagePath = "ao-cau-long-yonex-2097-do-nam_1712176975_f05d63.webp", DisplayOrder = 1 },
+            new ProductImage { Id = 30, ProductId = 10, ImagePath = "abju029-1_16ba38252602426590bcccf5cd7a735a-768x768_25168b.webp", DisplayOrder = 2 }
         );
     }
 }
