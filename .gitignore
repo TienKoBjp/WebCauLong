@@ -29,3 +29,8 @@ msbuild.wrn
 
 # Publish output
 publish/
+
+# Environment / Secret configs
+appsettings.Development.json
+*.ps1.secret
+
